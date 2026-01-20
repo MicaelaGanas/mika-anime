@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import ThemeToggle from "./ThemeToggle";
+import UserMenu from "./UserMenu";
 
 export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: { onToggleBookmarks?: () => void; onSearch?: (q: string) => void; onGenreSelect?: (genre: string) => void }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -89,6 +90,8 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
 
           {/* Nav Actions */}
           <nav className="flex items-center gap-3">
+            <UserMenu />
+            
             {/* Mobile search button */}
             <button
               onClick={() => setSearchOpen(true)}
