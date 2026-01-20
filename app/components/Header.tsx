@@ -50,10 +50,10 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
         onMouseEnter={() => setIsHoveringTop(true)}
         onMouseLeave={() => setIsHoveringTop(false)}
       >
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <svg className="w-10 h-10" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <defs>
                 <linearGradient id="mkGradient" x1="0" x2="1">
                   <stop offset="0" stopColor="#2bd5d5" />
@@ -64,8 +64,8 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
               <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fontSize="28" fill="url(#mkGradient)">M</text>
             </svg>
             <div className="flex flex-col">
-              <h1 className="text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">Mikareads</h1>
-              <span className="text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
+              <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">Mikareads</h1>
+              <span className="text-[8px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
             </div>
           </div>
 
@@ -128,12 +128,12 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
 
             <button
               onClick={onToggleBookmarks}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
-              <span className="text-sm font-medium">Library</span>
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">Library</span>
             </button>
           </nav>
         </div>

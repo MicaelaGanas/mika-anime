@@ -56,22 +56,22 @@ const MangaCard: React.FC<Props> = ({ manga, onOpen }) => {
   return (
     <article
       onClick={() => onOpen?.(manga.id)}
-      className="group cursor-pointer relative w-full flex gap-4 items-start p-4 rounded-lg bg-[#0a0a0a]/40 border border-[#2bd5d5]/10 hover:border-[#2bd5d5]/50 transition-all duration-300 hover:bg-[#0a0a0a]/60 backdrop-blur-sm"
+      className="group cursor-pointer relative w-full flex gap-2 sm:gap-3 md:gap-4 items-start p-2 sm:p-3 md:p-4 rounded-lg bg-[#0a0a0a]/40 border border-[#2bd5d5]/10 hover:border-[#2bd5d5]/50 transition-all duration-300 hover:bg-[#0a0a0a]/60 backdrop-blur-sm"
     >
-      <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#2bd5d5]/20 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-[#2bd5d5]/20 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute top-0 right-0 w-12 sm:w-16 h-12 sm:h-16 border-t-2 border-r-2 border-[#2bd5d5]/20 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute bottom-0 left-0 w-8 sm:w-12 h-8 sm:h-12 border-b-2 border-l-2 border-[#2bd5d5]/20 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity" />
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#2bd5d5]/30 via-[#2bd5d5]/10 to-[#2bd5d5]/30 rounded-l-lg opacity-0 group-hover:opacity-100 transition-opacity" />
 
-      <div className="relative w-20 h-28 bg-gray-900 rounded-lg overflow-hidden flex-shrink-0 border border-gray-800 group-hover:border-[#2bd5d5]/40 transition-all shadow-lg group-hover:shadow-[#2bd5d5]/20">
+      <div className="relative w-16 sm:w-20 h-22 sm:h-28 bg-gray-900 rounded-lg overflow-hidden flex-shrink-0 border border-gray-800 group-hover:border-[#2bd5d5]/40 transition-all shadow-lg group-hover:shadow-[#2bd5d5]/20">
         {coverUrl ? (
           <img src={coverUrl} alt={title} className="w-full h-full object-cover" loading="lazy" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">No cover</div>
+          <div className="w-full h-full flex items-center justify-center text-[8px] sm:text-xs text-gray-500">No cover</div>
         )}
 
-        <div className="absolute top-1 right-1">
+        <div className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1">
           <span
-            className={`px-1.5 py-0.5 text-[9px] font-bold rounded uppercase shadow-lg ${
+            className={`px-1 sm:px-1.5 py-0.5 text-[7px] sm:text-[9px] font-bold rounded uppercase shadow-lg ${
               status === "ongoing"
                 ? "bg-green-500 text-white"
                 : status === "completed"
@@ -87,25 +87,25 @@ const MangaCard: React.FC<Props> = ({ manga, onOpen }) => {
       </div>
 
       <div className="flex-1 min-w-0">
-        <h3 className="font-bold text-lg text-[#e6f7f7] group-hover:text-[#2bd5d5] transition-colors mb-1 line-clamp-2 leading-tight">
+        <h3 className="font-bold text-sm sm:text-base md:text-lg text-[#e6f7f7] group-hover:text-[#2bd5d5] transition-colors mb-0.5 sm:mb-1 line-clamp-2 leading-tight">
           {title}
         </h3>
 
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2 flex-wrap">
           {year && (
-            <span className="text-xs font-semibold text-[#93a9a9] px-2 py-0.5 bg-[#2bd5d5]/5 border border-[#2bd5d5]/20 rounded">
+            <span className="text-[9px] sm:text-xs font-semibold text-[#93a9a9] px-1.5 sm:px-2 py-0.5 bg-[#2bd5d5]/5 border border-[#2bd5d5]/20 rounded">
               {year}
             </span>
           )}
           {genres.slice(0, 2).map((genre, i) => (
-            <span key={i} className="text-xs px-2 py-0.5 bg-[#2bd5d5]/10 text-[#2bd5d5] rounded border border-[#2bd5d5]/30">
+            <span key={i} className="text-[9px] sm:text-xs px-1.5 sm:px-2 py-0.5 bg-[#2bd5d5]/10 text-[#2bd5d5] rounded border border-[#2bd5d5]/30">
               {genre}
             </span>
           ))}
         </div>
 
         {truncatedDescription && (
-          <p className="text-sm text-[#93a9a9] line-clamp-2 leading-relaxed">{truncatedDescription}</p>
+          <p className="text-xs sm:text-sm text-[#93a9a9] line-clamp-2 leading-relaxed">{truncatedDescription}</p>
         )}
       </div>
     </article>

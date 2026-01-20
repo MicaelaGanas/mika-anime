@@ -46,7 +46,7 @@ function buildUrl({ limit = LIMIT, offset = 0, q, status, sortBy, genreMode, sel
   selectedGenre?: string;
   hideFilters?: boolean;
 }) {
-  const url = new URL("https://api.mangadex.org/manga");
+  const url = new URL("/api/manga", typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("offset", String(offset));
   url.searchParams.set("includes[]", "cover_art");
@@ -85,13 +85,19 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
     setOffset(0);
 
     fetch(buildUrl({ limit: LIMIT, offset: 0, q, status, sortBy, genreMode, selectedGenre, hideFilters }))
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP error! status: ${r.status}`);
+        return r.json();
+      })
       .then((data) => {
         if (!mounted) return;
         setManga(data.data || []);
         setHasMore(data.total > LIMIT);
       })
-      .catch(() => setManga([]))
+      .catch((error) => {
+        console.error('Failed to fetch manga:', error);
+        setManga([]);
+      })
       .finally(() => setLoading(false));
 
     return () => {
@@ -116,12 +122,12 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
   }, [offset, query, status, sortBy, genreMode, selectedGenre, hideFilters]);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
       {!hideFilters && (
-        <aside className="w-64 flex-shrink-0">
-          <div className="sticky top-24 space-y-6">
-            <div className="p-4 rounded-lg bg-[#0a0a0a]/60 border border-[#2bd5d5]/20">
-              <h3 className="text-lg font-bold text-[#2bd5d5] mb-4 flex items-center gap-2">
+        <aside className="w-full lg:w-64 flex-shrink-0">
+          <div className="lg:sticky lg:top-24 space-y-4 lg:space-y-6">
+            <div className="p-3 lg:p-4 rounded-lg bg-[#0a0a0a]/60 border border-[#2bd5d5]/20">
+              <h3 className="text-base lg:text-lg font-bold text-[#2bd5d5] mb-3 lg:mb-4 flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
@@ -156,19 +162,26 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
                   <option value="title">Title (A-Z)</option>
                 </select>
               </div>
-
-              <button
-                onClick={() => {
-                  setStatus("all");
-                  setSortBy("relevance");
-                }}
-                className="w-full mt-4 px-3 py-2 rounded bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-colors"
-              >
-                Reset Filters
-              </button>
+              
+              <div className="flex items-center gap-3 mt-3 lg:mt-4">
+                <button
+                  onClick={() => {
+                    setStatus("all");
+                    setSortBy("relevance");
+                  }}
+                  className="flex-1 lg:w-full px-2 lg:px-3 py-1.5 lg:py-2 rounded bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs lg:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-colors"
+                >
+                  Reset
+                </button>
+                <div className="flex-1 lg:hidden px-2 py-1.5 rounded bg-[#2bd5d5]/5 border border-[#2bd5d5]/20 text-center">
+                  <p className="text-xs text-[#93a9a9]">
+                    <span className="font-bold text-[#2bd5d5]">{manga.length}</span> found
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#2bd5d5]/5 border border-[#2bd5d5]/20">
+            <div className="hidden lg:block p-4 rounded-lg bg-[#2bd5d5]/5 border border-[#2bd5d5]/20">
               <p className="text-sm text-[#93a9a9]">
                 <span className="font-bold text-[#2bd5d5]">{manga.length}</span> manga found
               </p>
@@ -178,9 +191,9 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
       )}
 
       <section className="flex-1">
-        {loading && <div className="text-[#93a9a9]">Loading…</div>}
-        {!loading && manga.length === 0 && <div className="text-[#93a9a9]">No results</div>}
-        <div className="grid grid-cols-2 gap-4 w-full">
+        {loading && <div className="text-[#93a9a9] text-sm">Loading…</div>}
+        {!loading && manga.length === 0 && <div className="text-[#93a9a9] text-sm">No results</div>}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 w-full">
           {manga.map((m) => (
             <MangaCard key={m.id} manga={m} onOpen={onSelectManga || (() => {})} />
           ))}

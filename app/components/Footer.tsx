@@ -4,12 +4,12 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-t from-black via-black/95 to-transparent border-t border-[#2bd5d5]/20 mt-16">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+    <footer className="w-full bg-gradient-to-t from-black via-black/95 to-transparent border-t border-[#2bd5d5]/20 mt-8 sm:mt-12 md:mt-16">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-4 sm:mb-6">
           <div>
-            <h2 className="text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent mb-2">Mikareads</h2>
-            <p className="text-sm text-[#93a9a9] mb-3">Your destination for reading manga online. Discover, read, and enjoy thousands of titles.</p>
+            <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent mb-2">Mikareads</h2>
+            <p className="text-xs sm:text-sm text-[#93a9a9] mb-3">Your destination for reading manga online. Discover, read, and enjoy thousands of titles.</p>
             <div className="flex gap-3">
               <a href="#" className="text-[#2bd5d5] hover:text-[#19bfbf] transition-colors">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
@@ -24,8 +24,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#2bd5d5] mb-3">Quick Links</h3>
-            <ul className="space-y-2 text-sm text-[#93a9a9]">
+            <h3 className="text-base sm:text-lg font-bold text-[#2bd5d5] mb-2 sm:mb-3">Quick Links</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#93a9a9]">
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Popular Manga</a></li>
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Latest Updates</a></li>
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Browse All</a></li>
@@ -34,8 +34,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[#2bd5d5] mb-3">Information</h3>
-            <ul className="space-y-2 text-sm text-[#93a9a9]">
+            <h3 className="text-base sm:text-lg font-bold text-[#2bd5d5] mb-2 sm:mb-3">Information</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#93a9a9]">
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">About Us</a></li>
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Terms of Service</a></li>
               <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Privacy Policy</a></li>
@@ -44,8 +44,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-[#2bd5d5]/20 pt-6">
-          <p className="text-center text-sm text-[#93a9a9]">© {new Date().getFullYear()} Mikareads. All rights reserved. Powered by MangaDex API.</p>
+        <div className="border-t border-[#2bd5d5]/20 pt-4 sm:pt-6">
+          <p className="text-center text-xs sm:text-sm text-[#93a9a9]">© {new Date().getFullYear()} Mikareads. All rights reserved. Powered by MangaDex API.</p>
         </div>
       </div>
     </footer>
