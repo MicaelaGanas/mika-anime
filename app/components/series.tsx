@@ -141,11 +141,11 @@ export default function Series({ id }: { id: string }) {
     <div>
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="flex-shrink-0">
-          <div className="w-full md:w-[280px] h-[400px] bg-gray-900 rounded-lg overflow-hidden border border-gray-800">
+          <div className="w-full md:w-[280px] bg-gray-900 rounded-lg overflow-hidden border border-gray-800">
             {coverUrl ? (
-              <img src={coverUrl} alt={title} className="w-full h-full object-cover" loading="lazy" />
+              <img src={coverUrl} alt={title} className="w-full h-auto max-h-[400px] object-contain" loading="lazy" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-500">No cover</div>
+              <div className="w-full h-[400px] flex items-center justify-center text-gray-500">No cover</div>
             )}
           </div>
         </div>

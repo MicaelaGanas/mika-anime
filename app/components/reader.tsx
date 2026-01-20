@@ -18,6 +18,12 @@ export default function Reader({ chapterId, onClose, chapters, onRequestChapterC
     fetchJsonCached(`/api/chapter/${chapterId}`)
       .then((d) => {
         if (!mounted) return;
+        // Validate response shape
+        if (!d || d.error || !d.baseUrl || !d.chapter || !Array.isArray(d.chapter.data)) {
+          console.warn('Invalid chapter server response for', chapterId, d);
+          setPages([]);
+          return;
+        }
         const base = d.baseUrl;
         const chapter = d.chapter || {};
         const hash = chapter.hash;
@@ -25,7 +31,8 @@ export default function Reader({ chapterId, onClose, chapters, onRequestChapterC
         const imgs = files.map((f: string) => `${base}/data/${hash}/${f}`);
         setPages(imgs);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('Error fetching chapter server:', err);
         setPages([]);
       })
       .finally(() => setLoading(false));
@@ -50,6 +57,9 @@ export default function Reader({ chapterId, onClose, chapters, onRequestChapterC
       try {
         const meta = await fetchJsonCached(`/api/chapter/${nextChapterId}`);
         if (!mounted || !meta) return;
+        if (meta.error || !meta.baseUrl || !meta.chapter || !Array.isArray(meta.chapter.data)) {
+          return;
+        }
         const base = meta.baseUrl;
         const chapter = meta.chapter || {};
         const hash = chapter.hash;
@@ -85,7 +95,12 @@ export default function Reader({ chapterId, onClose, chapters, onRequestChapterC
   }, []);
 
   if (loading) return <div className="text-[#93a9a9] text-center py-8">Loading pages…</div>;
-  if (pages.length === 0) return <div className="text-[#93a9a9] text-center py-8">No pages available</div>;
+  if (pages.length === 0) return (
+    <div className="text-[#93a9a9] text-center py-8">
+      <div className="mb-2">This chapter isn't available to view here.</div>
+      <a className="text-[#2bd5d5] underline" target="_blank" rel="noopener noreferrer" href={`https://mangadex.org/chapter/${chapterId}`}>Read on MangaDex</a>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#040506]">
