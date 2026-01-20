@@ -17,7 +17,7 @@ export default function Series({ id }: { id: string }) {
 
   useEffect(() => {
     let mounted = true;
-    const mangaUrl = new URL(`https://api.mangadex.org/manga/${id}`);
+    const mangaUrl = new URL(`/api/manga/${id}`, window.location.origin);
     mangaUrl.searchParams.append("includes[]", "cover_art");
     mangaUrl.searchParams.append("includes[]", "author");
     mangaUrl.searchParams.append("includes[]", "artist");
@@ -27,7 +27,8 @@ export default function Series({ id }: { id: string }) {
       .then(d => mounted && setData(d.data))
       .catch(() => {});
 
-    const feedUrl = new URL(`https://api.mangadex.org/manga/${id}/feed`);
+    const feedUrl = new URL(`/api/manga/${id}`, window.location.origin);
+    feedUrl.searchParams.append("feed", "true");
     feedUrl.searchParams.append("limit", "500");
     feedUrl.searchParams.append("order[chapter]", "asc");
     feedUrl.searchParams.append("includes[]", "scanlation_group");
@@ -80,7 +81,7 @@ export default function Series({ id }: { id: string }) {
   if (data.relationships) {
     const cover = data.relationships.find((r: any) => r.type === "cover_art");
     if (cover && cover.attributes?.fileName) {
-      coverUrl = `https://uploads.mangadex.org/covers/${id}/${cover.attributes.fileName}`;
+      coverUrl = `/api/cover?mangaId=${id}&fileName=${cover.attributes.fileName}`;
     }
     authors = data.relationships.filter((r: any) => r.type === "author").map((r: any) => r.attributes?.name).filter(Boolean);
     artists = data.relationships.filter((r: any) => r.type === "artist").map((r: any) => r.attributes?.name).filter(Boolean);

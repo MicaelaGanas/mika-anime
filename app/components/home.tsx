@@ -12,7 +12,8 @@ type PosterCardProps = { manga: any; onClick: () => void; delay?: number };
 
 function getCoverUrl(manga: any): string | undefined {
   const cover = manga.relationships?.find((r: any) => r.type === "cover_art");
-  return cover?.attributes?.fileName ? `https://uploads.mangadex.org/covers/${manga.id}/${cover.attributes.fileName}` : undefined;
+  if (!cover?.attributes?.fileName) return undefined;
+  return `/api/cover?mangaId=${manga.id}&fileName=${cover.attributes.fileName}`;
 }
 
 function PosterCard({ manga, onClick, delay = 0 }: PosterCardProps) {

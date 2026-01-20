@@ -33,7 +33,7 @@ export default function Reader({ chapterId, onClose }: { chapterId: string; onCl
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`https://api.mangadex.org/at-home/server/${chapterId}`)
+    fetch(`/api/chapter/${chapterId}`)
       .then(r => r.json())
       .then(d => {
         if (!mounted) return;

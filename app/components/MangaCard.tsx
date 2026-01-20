@@ -48,7 +48,7 @@ const MangaCard: React.FC<Props> = ({ manga, onOpen }) => {
 
   const coverRel = manga.relationships?.find((r) => r.type === "cover_art");
   const coverUrl = coverRel?.attributes?.fileName
-    ? `https://uploads.mangadex.org/covers/${manga.id}/${coverRel.attributes.fileName}`
+    ? `/api/cover?mangaId=${manga.id}&fileName=${coverRel.attributes.fileName}`
     : undefined;
 
   const truncatedDescription = description.length > 150 ? `${description.slice(0, 150)}...` : description;
