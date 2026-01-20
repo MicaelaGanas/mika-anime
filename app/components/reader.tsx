@@ -2,7 +2,14 @@
 
 import React, { useEffect, useState, useRef } from "react";
 
-export default function Reader({ chapterId, onClose }: { chapterId: string; onClose: () => void }) {
+interface ReaderProps {
+  chapterId: string;
+  onClose: () => void;
+  chapters?: any[];
+  onRequestChapterChange?: (id: string) => void;
+}
+
+export default function Reader({ chapterId, onClose, chapters = [], onRequestChapterChange }: ReaderProps) {
   const [pages, setPages] = useState<string[]>([]);
   const [mode, setMode] = useState<"scroll" | "paged">("scroll");
   const [loading, setLoading] = useState(false);
@@ -55,6 +62,11 @@ export default function Reader({ chapterId, onClose }: { chapterId: string; onCl
     };
   }, [chapterId]);
 
+  // Find current chapter index and get prev/next
+  const currentIndex = chapters.findIndex((c) => c.id === chapterId);
+  const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
+  const nextChapter = currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
+
   if (loading) return <div className="text-[#93a9a9] text-center py-8">Loading pages…</div>;
   if (pages.length === 0) return (
     <div className="text-[#93a9a9] text-center py-8">
@@ -84,12 +96,32 @@ export default function Reader({ chapterId, onClose }: { chapterId: string; onCl
             Back to Chapters
           </button>
           
-          <button
-            onClick={() => setMode(m => (m === "scroll" ? "paged" : "scroll"))}
-            className="px-4 py-2 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
-          >
-            {mode === "scroll" ? "📖 Paged Mode" : "📜 Scroll Mode"}
-          </button>
+          <div className="flex items-center gap-2">
+            {prevChapter && onRequestChapterChange && (
+              <button
+                onClick={() => onRequestChapterChange(prevChapter.id)}
+                className="px-3 py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+              >
+                ← Prev
+              </button>
+            )}
+            
+            <button
+              onClick={() => setMode(m => (m === "scroll" ? "paged" : "scroll"))}
+              className="px-4 py-2 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+            >
+              {mode === "scroll" ? "📖 Paged" : "📜 Scroll"}
+            </button>
+            
+            {nextChapter && onRequestChapterChange && (
+              <button
+                onClick={() => onRequestChapterChange(nextChapter.id)}
+                className="px-3 py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+              >
+                Next →
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
