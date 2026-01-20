@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Fetch chapter server info from MangaDex with timeout
+    // Fetch chapter server info from MangaDex with timeout - NO CACHING
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout for Vercel
 
@@ -20,7 +20,7 @@ export async function GET(
         'User-Agent': 'Mikareads/1.0',
       },
       signal: controller.signal,
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: 'no-store', // Force fresh fetch every time
     });
 
     clearTimeout(timeoutId);

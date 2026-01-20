@@ -27,39 +27,59 @@ export default function Series({ id }: { id: string }) {
       .then(d => mounted && setData(d.data))
       .catch(() => {});
 
-    const feedUrl = new URL(`/api/manga/${id}`, window.location.origin);
-    feedUrl.searchParams.append("feed", "true");
-    feedUrl.searchParams.append("limit", "500");
-    feedUrl.searchParams.append("order[chapter]", "asc");
-    feedUrl.searchParams.append("includes[]", "scanlation_group");
+    // Fetch all chapters with pagination
+    const fetchAllChapters = async () => {
+      let allChapters: any[] = [];
+      let offset = 0;
+      const limit = 500;
+      let hasMore = true;
 
-    fetch(feedUrl.toString())
-      .then(async r => {
-        if (!r.ok) {
-          const txt = await r.text();
-          throw new Error(`HTTP ${r.status}: ${txt}`);
+      while (hasMore) {
+        const feedUrl = new URL(`/api/manga/${id}`, window.location.origin);
+        feedUrl.searchParams.append("feed", "true");
+        feedUrl.searchParams.append("limit", limit.toString());
+        feedUrl.searchParams.append("offset", offset.toString());
+        feedUrl.searchParams.append("order[chapter]", "asc");
+        feedUrl.searchParams.append("includes[]", "scanlation_group");
+
+        try {
+          const r = await fetch(feedUrl.toString());
+          if (!r.ok) {
+            const txt = await r.text();
+            throw new Error(`HTTP ${r.status}: ${txt}`);
+          }
+          const d = await r.json();
+          
+          if (!mounted) return;
+          
+          const list = d.data || [];
+          allChapters = [...allChapters, ...list];
+          
+          // Check if there are more chapters to fetch
+          const total = d.total || 0;
+          if (allChapters.length >= total || list.length < limit) {
+            hasMore = false;
+          } else {
+            offset += limit;
+          }
+        } catch (err) {
+          if (!mounted) return;
+          setChapters([]);
+          setError(String(err));
+          return;
         }
-        return r.json();
-      })
-      .then(d => {
-        if (!mounted) return;
-        const list = d.data || [];
-        setChapters(list);
-        if (!list || list.length === 0) {
-          setError(`No chapters returned from feed endpoint. Response summary: ${JSON.stringify(
-            { result: d.result, total: d.total, limit: d.limit },
-            null,
-            2
-          )}`);
-        } else {
-          setError(null);
-        }
-      })
-      .catch(err => {
-        if (!mounted) return;
-        setChapters([]);
-        setError(String(err));
-      });
+      }
+
+      if (!mounted) return;
+      setChapters(allChapters);
+      if (allChapters.length === 0) {
+        setError(`No chapters found for this manga`);
+      } else {
+        setError(null);
+      }
+    };
+
+    fetchAllChapters();
 
     return () => {
       mounted = false;
