@@ -75,11 +75,6 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
           if (base && hash && files && files.length > 0) {
             const imgs = files.map((f: string) => `${base}/data/${hash}/${f}`);
             setPages(imgs);
-            
-            // Mark chapter as read
-            fetch(`/api/chapter/${chapterId}/read`, { method: 'POST' })
-              .catch(err => console.error('Failed to mark as read:', err));
-            
             return; // Success, exit retry loop
           } else {
             console.warn('Missing required fields:', { hasBase: !!base, hasHash: !!hash, filesCount: files?.length }); // DEBUG

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Reader from "./reader";
-import BookmarkButton from "./BookmarkButton";
 
 export default function Series({ id }: { id: string }) {
   const [data, setData] = useState<any | null>(null);
@@ -172,10 +171,7 @@ export default function Series({ id }: { id: string }) {
         </div>
 
         <div className="flex-1">
-          <div className="flex items-start justify-between mb-3">
-            <h1 className="text-4xl font-bold text-[#2bd5d5]">{title}</h1>
-            <BookmarkButton mangaId={id} />
-          </div>
+          <h1 className="text-4xl font-bold text-[#2bd5d5] mb-3">{title}</h1>
 
           <div className="space-y-2 mb-4">
             {authors.length > 0 && (
