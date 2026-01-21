@@ -18,6 +18,7 @@ export default function Series({ id }: { id: string }) {
   const [groupByChapter, setGroupByChapter] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
+  const [loadingChapters, setLoadingChapters] = useState<boolean>(true);
 
   useEffect(() => {
     let mounted = true;
@@ -31,12 +32,13 @@ export default function Series({ id }: { id: string }) {
       .then(d => mounted && setData(d.data))
       .catch(() => {});
 
-    // Fetch all chapters with pagination
+    // Fetch chapters with optimized pagination
     const fetchAllChapters = async () => {
       let allChapters: any[] = [];
       let offset = 0;
       const limit = 500;
       let hasMore = true;
+      let isFirstBatch = true;
 
       while (hasMore) {
         const feedUrl = new URL(`/api/manga/${id}`, window.location.origin);
@@ -59,17 +61,27 @@ export default function Series({ id }: { id: string }) {
           const list = d.data || [];
           allChapters = [...allChapters, ...list];
           
+          // Update UI immediately with first batch
+          if (isFirstBatch) {
+            setChapters([...allChapters]);
+            setLoadingChapters(false);
+            isFirstBatch = false;
+          }
+          
           // Check if there are more chapters to fetch
           const total = d.total || 0;
           if (allChapters.length >= total || list.length < limit) {
             hasMore = false;
           } else {
             offset += limit;
+            // Small delay to avoid rate limiting
+            await new Promise(resolve => setTimeout(resolve, 100));
           }
         } catch (err) {
           if (!mounted) return;
           setChapters([]);
           setError(String(err));
+          setLoadingChapters(false);
           return;
         }
       }
@@ -248,7 +260,9 @@ export default function Series({ id }: { id: string }) {
       )}
 
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-[#2bd5d5] mb-3">All Chapters</h3>
+        <h3 className="text-lg font-bold text-[#2bd5d5] mb-3">
+          All Chapters {loadingChapters && <span className="text-sm text-[#93a9a9] ml-2">Loading...</span>}
+        </h3>
 
         <div className="mb-4 p-4 rounded-lg bg-[rgba(10,10,10,0.6)] border border-[#2bd5d5]/20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
