@@ -4,6 +4,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // In-memory cache with TTL
+// MangaDex rate limits: 5 req/sec global, 40 req/min for AtHome endpoint
+// Caching reduces load and ensures compliance
 const cache = new Map<string, { data: any; expires: number }>();
 
 function getCached(key: string) {

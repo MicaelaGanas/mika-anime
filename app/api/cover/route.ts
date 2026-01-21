@@ -16,6 +16,10 @@ export async function GET(request: NextRequest) {
     // Fetch cover image from MangaDex
     const imageUrl = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}`;
     const response = await fetch(imageUrl, {
+      headers: {
+        'User-Agent': 'Mikareads/1.0 (https://mika-anime.vercel.app)',
+        'Referer': 'https://mangadex.org',
+      },
       cache: 'force-cache', // Cache images for better performance
     });
 

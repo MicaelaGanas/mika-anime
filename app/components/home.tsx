@@ -180,8 +180,23 @@ export default function Home() {
     <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
       <Header onToggleBookmarks={() => setShowBookmarks(s => !s)} onSearch={handleSearch} onGenreSelect={handleGenreSelect} />
       
+      {/* Bookmarks View */}
+      {showBookmarks && (
+        <main className="max-w-7xl mx-auto px-2 sm:px-4 pb-6 sm:pb-12 pt-20 sm:pt-24">
+          <div className="mb-4 sm:mb-6 flex items-center gap-2 sm:gap-4">
+            <button onClick={() => setShowBookmarks(false)} className="text-[#2bd5d5] hover:underline flex items-center gap-1 sm:gap-2 transition-all">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-xs sm:text-base">Back to Home</span>
+            </button>
+          </div>
+          <Bookmarks />
+        </main>
+      )}
+      
       {/* Search/Genre Results View */}
-      {(isSearchMode || selectedGenre) && (
+      {!showBookmarks && (isSearchMode || selectedGenre) && (
         <main className="max-w-7xl mx-auto px-2 sm:px-4 pb-6 sm:pb-12 pt-20 sm:pt-24">
           <div className="mb-4 sm:mb-6 flex items-center gap-2 sm:gap-4">
             <button onClick={handleBackToHome} className="text-[#2bd5d5] hover:underline flex items-center gap-1 sm:gap-2 transition-all">
@@ -199,7 +214,7 @@ export default function Home() {
       )}
       
       {/* Normal Home View */}
-      {!isSearchMode && !selectedGenre && (
+      {!showBookmarks && !isSearchMode && !selectedGenre && (
         <>
       {/* Hero Banner */}
       {featured && (

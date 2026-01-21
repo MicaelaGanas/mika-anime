@@ -4,43 +4,50 @@ import { useState, useEffect } from 'react';
 
 interface BookmarkButtonProps {
   mangaId: string;
+  title: string;
+  coverUrl?: string;
 }
 
-export default function BookmarkButton({ mangaId }: BookmarkButtonProps) {
+export default function BookmarkButton({ mangaId, title, coverUrl }: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const toggleBookmark = async () => {
-    setLoading(true);
-    try {
-      const method = isBookmarked ? 'DELETE' : 'POST';
-      const response = await fetch(`/api/manga/${mangaId}/follow`, {
-        method,
+  useEffect(() => {
+    // Check if already bookmarked
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+    setIsBookmarked(bookmarks.some((b: any) => b.id === mangaId));
+  }, [mangaId]);
+
+  const toggleBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+    
+    if (isBookmarked) {
+      // Remove bookmark
+      const filtered = bookmarks.filter((b: any) => b.id !== mangaId);
+      localStorage.setItem('bookmarks', JSON.stringify(filtered));
+      setIsBookmarked(false);
+    } else {
+      // Add bookmark
+      bookmarks.push({
+        id: mangaId,
+        title,
+        coverUrl,
+        addedAt: new Date().toISOString(),
       });
-
-      if (response.ok) {
-        setIsBookmarked(!isBookmarked);
-      } else if (response.status === 401) {
-        alert('Please login to bookmark manga');
-      }
-    } catch (error) {
-      console.error('Bookmark error:', error);
-    } finally {
-      setLoading(false);
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      setIsBookmarked(true);
     }
   };
 
   return (
     <button
       onClick={toggleBookmark}
-      disabled={loading}
       className={`px-4 py-2 rounded font-semibold transition-all ${
         isBookmarked
           ? 'bg-[#2bd5d5] text-black hover:bg-[#19bfbf]'
           : 'bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] hover:bg-[#2bd5d5]/20'
-      } disabled:opacity-50`}
+      }`}
     >
-      {loading ? '...' : isBookmarked ? '★ Bookmarked' : '☆ Bookmark'}
+      {isBookmarked ? '★ Bookmarked' : '☆ Bookmark'}
     </button>
   );
 }

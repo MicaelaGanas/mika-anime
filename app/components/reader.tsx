@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { fetchJsonCached, clearFetchCache } from "../lib/fetchCache";
+import Header from "./Header";
+import Bookmarks from "./bookmarks";
 
 interface ReaderProps {
   chapterId: string;
@@ -17,6 +19,7 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
   const [headerVisible, setHeaderVisible] = useState(true);
   const lastScrollY = useRef(0);
   const [hoveringTop, setHoveringTop] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,7 +76,11 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
           console.log('Parsed:', { base, hash, filesCount: files?.length }); // DEBUG
           
           if (base && hash && files && files.length > 0) {
-            const imgs = files.map((f: string) => `${base}/data/${hash}/${f}`);
+            // Proxy images through our API to avoid MangaDex hotlinking restrictions
+            const imgs = files.map((f: string) => {
+              const originalUrl = `${base}/data/${hash}/${f}`;
+              return `/api/proxy-image?url=${encodeURIComponent(originalUrl)}`;
+            });
             setPages(imgs);
             return; // Success, exit retry loop
           } else {
@@ -103,6 +110,27 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
   const currentIndex = chapters.findIndex((c) => c.id === chapterId);
   const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
   const nextChapter = currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
+  const currentChapter = chapters[currentIndex];
+  
+  // Get chapter label
+  const getChapterLabel = () => {
+    if (!currentChapter) return "Chapter";
+    const chNum = currentChapter.attributes?.chapter;
+    const title = currentChapter.attributes?.title;
+    if (chNum && title) return `Ch. ${chNum}: ${title}`;
+    if (chNum) return `Chapter ${chNum}`;
+    if (title) return title;
+    return "Chapter";
+  };
+
+  if (showBookmarks) {
+    return (
+      <div className="min-h-screen bg-[#040506]">
+        <Header onToggleBookmarks={() => setShowBookmarks(false)} />
+        <Bookmarks onBack={() => setShowBookmarks(false)} />
+      </div>
+    );
+  }
 
   if (loading) return <div className="text-[#93a9a9] text-center py-8">Loading pages…</div>;
   if (pages.length === 0) return (
@@ -122,47 +150,64 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
         onMouseEnter={() => setHoveringTop(true)}
         onMouseLeave={() => setHoveringTop(false)}
       >
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-2 text-[#2bd5d5] hover:text-[#19bfbf] transition-colors font-semibold"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Chapters
-          </button>
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
+          {/* Top row - Back button and Library */}
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1 sm:gap-2 text-[#2bd5d5] hover:text-[#19bfbf] transition-colors font-semibold text-xs sm:text-base"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="hidden sm:inline">Back to Chapters</span>
+              <span className="sm:hidden">Back</span>
+            </button>
+            <button
+              onClick={() => setShowBookmarks(true)}
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+            >
+              📚 <span className="hidden sm:inline">Library</span>
+            </button>
+          </div>
           
-          <div className="flex items-center gap-2">
-            {prevChapter && onRequestChapterChange && (
-              <button
-                onClick={() => onRequestChapterChange(prevChapter.id)}
-                className="px-3 py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
-              >
-                ← Prev
-              </button>
-            )}
+          {/* Chapter title */}
+          <div className="text-center mb-2 sm:mb-3">
+            <h2 className="text-sm sm:text-lg font-bold text-[#e6f7f7] truncate px-2">{getChapterLabel()}</h2>
+          </div>
+          
+          {/* Navigation row */}
+          <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
+            <button
+              onClick={() => onRequestChapterChange && prevChapter && onRequestChapterChange(prevChapter.id)}
+              disabled={!prevChapter || !onRequestChapterChange}
+              className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <span className="hidden sm:inline">← Prev</span>
+              <span className="sm:hidden">←</span>
+            </button>
             
             <button
               onClick={() => setMode(m => (m === "scroll" ? "paged" : "scroll"))}
-              className="px-4 py-2 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+              className="px-2 sm:px-4 py-1 sm:py-2 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
             >
-              {mode === "scroll" ? "📖 Paged" : "📜 Scroll"}
+              {mode === "scroll" ? "📖" : "📜"}
+              <span className="hidden sm:inline ml-1">{mode === "scroll" ? "Paged" : "Scroll"}</span>
             </button>
             
-            {nextChapter && onRequestChapterChange && (
-              <button
-                onClick={() => onRequestChapterChange(nextChapter.id)}
-                className="px-3 py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
-              >
-                Next →
-              </button>
-            )}
+            <button
+              onClick={() => onRequestChapterChange && nextChapter && onRequestChapterChange(nextChapter.id)}
+              disabled={!nextChapter || !onRequestChapterChange}
+              className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <span className="hidden sm:inline">Next →</span>
+              <span className="sm:hidden">→</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 pt-20">
+      <div className="max-w-5xl mx-auto px-2 sm:px-4 pt-32 sm:pt-36">
         {mode === "scroll" ? (
           <div className="space-y-2">
             {pages.map((p, i) => (
@@ -179,6 +224,30 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
         ) : (
           <PagedView pages={pages} />
         )}
+        
+        {/* Bottom Navigation */}
+        <div className="mt-8 mb-4 flex items-center justify-center gap-2 sm:gap-4 p-4 bg-[#0a0a0a]/60 border border-[#2bd5d5]/20 rounded-lg">
+          <button
+            onClick={() => onRequestChapterChange && prevChapter && onRequestChapterChange(prevChapter.id)}
+            disabled={!prevChapter || !onRequestChapterChange}
+            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            ← Previous Chapter
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+          >
+            All Chapters
+          </button>
+          <button
+            onClick={() => onRequestChapterChange && nextChapter && onRequestChapterChange(nextChapter.id)}
+            disabled={!nextChapter || !onRequestChapterChange}
+            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Next Chapter →
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -188,23 +257,25 @@ function PagedView({ pages }: { pages: string[] }) {
   const [index, setIndex] = useState(0);
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between bg-[#0a0a0a]/60 border border-[#2bd5d5]/20 rounded-lg p-4">
+      <div className="mb-4 flex items-center justify-between bg-[#0a0a0a]/60 border border-[#2bd5d5]/20 rounded-lg p-2 sm:p-4">
         <button 
           onClick={() => setIndex(i => Math.max(0, i - 1))} 
           disabled={index === 0}
-          className="px-4 py-2 bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] rounded-lg font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-2 sm:px-4 py-1.5 sm:py-2 bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] rounded-lg text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          ← Previous
+          <span className="hidden sm:inline">← Previous</span>
+          <span className="sm:hidden">←</span>
         </button>
-        <div className="text-sm text-[#93a9a9]">
+        <div className="text-xs sm:text-sm text-[#93a9a9]">
           Page <span className="text-[#2bd5d5] font-bold">{index + 1}</span> of <span className="text-[#2bd5d5] font-bold">{pages.length}</span>
         </div>
         <button 
           onClick={() => setIndex(i => Math.min(pages.length - 1, i + 1))} 
           disabled={index === pages.length - 1}
-          className="px-4 py-2 bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] rounded-lg font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-2 sm:px-4 py-1.5 sm:py-2 bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] rounded-lg text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next →
+          <span className="hidden sm:inline">Next →</span>
+          <span className="sm:hidden">→</span>
         </button>
       </div>
       <div>

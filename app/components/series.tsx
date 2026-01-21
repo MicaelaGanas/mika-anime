@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Reader from "./reader";
+import BookmarkButton from "./BookmarkButton";
+import Header from "./Header";
+import Bookmarks from "./bookmarks";
 
 export default function Series({ id }: { id: string }) {
   const [data, setData] = useState<any | null>(null);
@@ -14,6 +17,7 @@ export default function Series({ id }: { id: string }) {
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [groupByChapter, setGroupByChapter] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
 
   useEffect(() => {
     let mounted = true;
@@ -149,6 +153,15 @@ export default function Series({ id }: { id: string }) {
     displayChapters = Array.from(grouped.values()).map(group => group[0]);
   }
 
+  if (showBookmarks) {
+    return (
+      <div className="min-h-screen bg-[#040506]">
+        <Header onToggleBookmarks={() => setShowBookmarks(false)} />
+        <Bookmarks onBack={() => setShowBookmarks(false)} />
+      </div>
+    );
+  }
+
   if (openChapter) {
     return (
       <div>
@@ -158,7 +171,15 @@ export default function Series({ id }: { id: string }) {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#040506]">
+      <Header onToggleBookmarks={() => setShowBookmarks(true)} />
+      <div className="p-6">
+        <button onClick={() => window.location.href = "/"} className="flex items-center gap-2 mb-6 text-[#2bd5d5] hover:text-[#19bfbf] transition-colors font-semibold">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Home
+        </button>
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="flex-shrink-0">
           <div className="w-full md:w-[280px] bg-gray-900 rounded-lg overflow-hidden border border-gray-800">
@@ -171,7 +192,10 @@ export default function Series({ id }: { id: string }) {
         </div>
 
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-[#2bd5d5] mb-3">{title}</h1>
+          <div className="flex items-start justify-between mb-3">
+            <h1 className="text-4xl font-bold text-[#2bd5d5]">{title}</h1>
+            <BookmarkButton mangaId={id} title={title} coverUrl={coverUrl} />
+          </div>
 
           <div className="space-y-2 mb-4">
             {authors.length > 0 && (
@@ -293,6 +317,7 @@ export default function Series({ id }: { id: string }) {
             </div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
