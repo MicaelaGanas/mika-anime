@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import ThemeToggle from "./ThemeToggle";
 
-export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: { onToggleBookmarks?: () => void; onSearch?: (q: string) => void; onGenreSelect?: (genre: string) => void }) {
+export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onNavigateHome, onNavigatePopular, onNavigateLatest, onNavigateBrowse, activePage = "home" }: { onToggleBookmarks?: () => void; onSearch?: (q: string) => void; onGenreSelect?: (genre: string) => void; onNavigateHome?: () => void; onNavigatePopular?: () => void; onNavigateLatest?: () => void; onNavigateBrowse?: () => void; activePage?: "home" | "popular" | "latest" | "browse" }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [isVisible, setIsVisible] = useState(true);
@@ -44,7 +44,7 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
   return (
     <>
       <header 
-        className={`w-full bg-gradient-to-b from-black via-black/95 to-transparent border-b border-[#2bd5d5]/20 backdrop-blur-xl fixed top-0 z-50 transition-transform duration-500 ease-in-out ${
+        className={`left-0 right-0 bg-gradient-to-b from-black via-black/95 to-transparent border-b border-[#2bd5d5]/20 backdrop-blur-xl fixed top-0 z-50 transition-transform duration-500 ease-in-out ${
           isVisible || isHoveringTop ? 'translate-y-0' : '-translate-y-full'
         }`}
         onMouseEnter={() => setIsHoveringTop(true)}
@@ -53,21 +53,43 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect }: {
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
-            <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-              <defs>
-                <linearGradient id="mkGradient" x1="0" x2="1">
-                  <stop offset="0" stopColor="#2bd5d5" />
-                  <stop offset="1" stopColor="#19bfbf" />
-                </linearGradient>
-              </defs>
-              <rect width="64" height="64" rx="12" fill="#040506" />
-              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fontSize="28" fill="url(#mkGradient)">M</text>
-            </svg>
-            <div className="flex flex-col">
-              <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">Mikareads</h1>
-              <span className="text-[8px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
-            </div>
+            <button onClick={onNavigateHome} className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity">
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <defs>
+                  <linearGradient id="mkGradient" x1="0" x2="1">
+                    <stop offset="0" stopColor="#2bd5d5" />
+                    <stop offset="1" stopColor="#19bfbf" />
+                  </linearGradient>
+                </defs>
+                <rect width="64" height="64" rx="12" fill="#040506" />
+                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fontSize="28" fill="url(#mkGradient)">M</text>
+              </svg>
+              <div className="flex flex-col">
+                <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">Mikareads</h1>
+                <span className="text-[8px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
+              </div>
+            </button>
           </div>
+
+          {/* Quick Nav Links - Desktop */}
+          <nav className="hidden lg:flex items-center gap-1">
+            <button onClick={onNavigateHome} className={`relative px-3 py-1.5 text-sm transition-all ${activePage === "home" ? "text-[#2bd5d5]" : "text-[#e6f7f7] hover:text-[#2bd5d5]"} hover:bg-[#2bd5d5]/10 rounded-lg`}>
+              Home
+              {activePage === "home" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2bd5d5] to-transparent" />}
+            </button>
+            <button onClick={onNavigatePopular} className={`relative px-3 py-1.5 text-sm transition-all ${activePage === "popular" ? "text-[#2bd5d5]" : "text-[#e6f7f7] hover:text-[#2bd5d5]"} hover:bg-[#2bd5d5]/10 rounded-lg`}>
+              Popular
+              {activePage === "popular" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2bd5d5] to-transparent" />}
+            </button>
+            <button onClick={onNavigateLatest} className={`relative px-3 py-1.5 text-sm transition-all ${activePage === "latest" ? "text-[#2bd5d5]" : "text-[#e6f7f7] hover:text-[#2bd5d5]"} hover:bg-[#2bd5d5]/10 rounded-lg`}>
+              Latest
+              {activePage === "latest" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2bd5d5] to-transparent" />}
+            </button>
+            <button onClick={onNavigateBrowse} className={`relative px-3 py-1.5 text-sm transition-all ${activePage === "browse" ? "text-[#2bd5d5]" : "text-[#e6f7f7] hover:text-[#2bd5d5]"} hover:bg-[#2bd5d5]/10 rounded-lg`}>
+              Browse
+              {activePage === "browse" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2bd5d5] to-transparent" />}
+            </button>
+          </nav>
 
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md">

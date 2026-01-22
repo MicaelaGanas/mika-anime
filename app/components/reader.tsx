@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { fetchJsonCached, clearFetchCache } from "../lib/fetchCache";
-import Header from "./Header";
 import Bookmarks from "./bookmarks";
 
 interface ReaderProps {
@@ -16,30 +15,7 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
   const [pages, setPages] = useState<string[]>([]);
   const [mode, setMode] = useState<"scroll" | "paged">("scroll");
   const [loading, setLoading] = useState(false);
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const lastScrollY = useRef(0);
-  const [hoveringTop, setHoveringTop] = useState(false);
   const [showBookmarks, setShowBookmarks] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (hoveringTop) {
-        lastScrollY.current = currentScrollY;
-        return;
-      }
-
-      if (currentScrollY < 50) setHeaderVisible(true);
-      else if (currentScrollY > lastScrollY.current && currentScrollY > 100) setHeaderVisible(false);
-      else if (currentScrollY < lastScrollY.current) setHeaderVisible(true);
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY, hoveringTop]);
 
   useEffect(() => {
     let mounted = true;
@@ -126,13 +102,41 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
   if (showBookmarks) {
     return (
       <div className="min-h-screen bg-[#040506]">
-        <Header onToggleBookmarks={() => setShowBookmarks(false)} />
         <Bookmarks onBack={() => setShowBookmarks(false)} />
       </div>
     );
   }
 
-  if (loading) return <div className="text-[#93a9a9] text-center py-8">Loading pages…</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#040506] pb-12">
+        <div className="fixed top-0 left-0 right-0 z-30 bg-gradient-to-b from-black via-black/95 to-transparent border-b border-[#2bd5d5]/20 backdrop-blur-xl">
+          <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
+              <div className="h-8 w-20 bg-gray-800 rounded animate-pulse" />
+            </div>
+            <div className="text-center mb-2 sm:mb-3">
+              <div className="h-6 bg-gray-800 rounded w-64 mx-auto animate-pulse" />
+            </div>
+            <div className="flex items-center justify-center gap-1 sm:gap-2">
+              <div className="h-8 w-16 bg-gray-800 rounded animate-pulse" />
+              <div className="h-8 w-20 bg-gray-800 rounded animate-pulse" />
+              <div className="h-8 w-16 bg-gray-800 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 pt-32 sm:pt-36">
+          <div className="space-y-2">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="w-full h-96 bg-gray-800 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (pages.length === 0) return (
     <div className="text-[#93a9a9] text-center py-8">
       <div className="mb-2">This chapter isn't available to view here.</div>
@@ -142,72 +146,30 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
 
   return (
     <div className="min-h-screen bg-[#040506] pb-12">
-      {/* Reader Header - Auto-hide on scroll */}
-      <div 
-        className={`fixed top-0 left-0 right-0 z-30 bg-gradient-to-b from-black via-black/95 to-transparent border-b border-[#2bd5d5]/20 backdrop-blur-xl transition-transform duration-500 ${
-          headerVisible || hoveringTop ? 'translate-y-0' : '-translate-y-full'
-        }`}
-        onMouseEnter={() => setHoveringTop(true)}
-        onMouseLeave={() => setHoveringTop(false)}
+      {/* Floating Back Button - Top Left */}
+      <button
+        onClick={onClose}
+        className="fixed top-4 left-4 z-50 p-2 sm:p-3 rounded-full bg-black/80 backdrop-blur-sm border border-[#2bd5d5]/30 text-[#2bd5d5] hover:bg-black/90 hover:border-[#2bd5d5] transition-all shadow-lg"
       >
-        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
-          {/* Top row - Back button and Library */}
-          <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <button
-              onClick={onClose}
-              className="flex items-center gap-1 sm:gap-2 text-[#2bd5d5] hover:text-[#19bfbf] transition-colors font-semibold text-xs sm:text-base"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="hidden sm:inline">Back to Chapters</span>
-              <span className="sm:hidden">Back</span>
-            </button>
-            <button
-              onClick={() => setShowBookmarks(true)}
-              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
-            >
-              📚 <span className="hidden sm:inline">Library</span>
-            </button>
-          </div>
-          
-          {/* Chapter title */}
-          <div className="text-center mb-2 sm:mb-3">
-            <h2 className="text-sm sm:text-lg font-bold text-[#e6f7f7] truncate px-2">{getChapterLabel()}</h2>
-          </div>
-          
-          {/* Navigation row */}
-          <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
-            <button
-              onClick={() => onRequestChapterChange && prevChapter && onRequestChapterChange(prevChapter.id)}
-              disabled={!prevChapter || !onRequestChapterChange}
-              className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <span className="hidden sm:inline">← Prev</span>
-              <span className="sm:hidden">←</span>
-            </button>
-            
-            <button
-              onClick={() => setMode(m => (m === "scroll" ? "paged" : "scroll"))}
-              className="px-2 sm:px-4 py-1 sm:py-2 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
-            >
-              {mode === "scroll" ? "📖" : "📜"}
-              <span className="hidden sm:inline ml-1">{mode === "scroll" ? "Paged" : "Scroll"}</span>
-            </button>
-            
-            <button
-              onClick={() => onRequestChapterChange && nextChapter && onRequestChapterChange(nextChapter.id)}
-              disabled={!nextChapter || !onRequestChapterChange}
-              className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <span className="hidden sm:inline">Next →</span>
-              <span className="sm:hidden">→</span>
-            </button>
-          </div>
-        </div>
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      {/* Chapter Info - Top Center */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-3 sm:px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-[#2bd5d5]/30 max-w-xs sm:max-w-md">
+        <p className="text-xs sm:text-sm font-semibold text-[#e6f7f7] truncate text-center">{getChapterLabel()}</p>
       </div>
 
-      <div className="max-w-5xl mx-auto px-2 sm:px-4 pt-32 sm:pt-36">
+      {/* Mode Toggle - Top Right */}
+      <button
+        onClick={() => setMode(m => (m === "scroll" ? "paged" : "scroll"))}
+        className="fixed top-4 right-4 z-50 px-3 sm:px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-black/90 hover:border-[#2bd5d5] transition-all shadow-lg"
+      >
+        {mode === "scroll" ? "📖 Paged" : "📜 Scroll"}
+      </button>
+
+      <div className="max-w-5xl mx-auto px-2 sm:px-4 pt-20">
         {mode === "scroll" ? (
           <div className="space-y-2">
             {pages.map((p, i) => (
@@ -226,24 +188,24 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
         )}
         
         {/* Bottom Navigation */}
-        <div className="mt-8 mb-4 flex items-center justify-center gap-2 sm:gap-4 p-4 bg-[#0a0a0a]/60 border border-[#2bd5d5]/20 rounded-lg">
+        <div className="mt-8 mb-4 flex flex-col sm:flex-row items-center justify-center gap-3 p-4 bg-black/60 backdrop-blur-sm border border-[#2bd5d5]/30 rounded-xl">
           <button
             onClick={() => onRequestChapterChange && prevChapter && onRequestChapterChange(prevChapter.id)}
             disabled={!prevChapter || !onRequestChapterChange}
-            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             ← Previous Chapter
           </button>
           <button
             onClick={onClose}
-            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all"
           >
             All Chapters
           </button>
           <button
             onClick={() => onRequestChapterChange && nextChapter && onRequestChapterChange(nextChapter.id)}
             disabled={!nextChapter || !onRequestChapterChange}
-            className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs sm:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Next Chapter →
           </button>

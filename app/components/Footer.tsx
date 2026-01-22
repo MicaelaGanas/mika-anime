@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export default function Footer() {
+export default function Footer({ onNavigatePopular, onNavigateLatest, onNavigateBrowse, onNavigateBookmarks }: { onNavigatePopular?: () => void; onNavigateLatest?: () => void; onNavigateBrowse?: () => void; onNavigateBookmarks?: () => void }) {
   return (
     <footer className="w-full bg-gradient-to-t from-black via-black/95 to-transparent border-t border-[#2bd5d5]/20 mt-8 sm:mt-12 md:mt-16">
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
@@ -26,10 +26,10 @@ export default function Footer() {
           <div>
             <h3 className="text-base sm:text-lg font-bold text-[#2bd5d5] mb-2 sm:mb-3">Quick Links</h3>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#93a9a9]">
-              <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Popular Manga</a></li>
-              <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Latest Updates</a></li>
-              <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">Browse All</a></li>
-              <li><a href="#" className="hover:text-[#2bd5d5] transition-colors">My Library</a></li>
+              <li><button onClick={onNavigatePopular} className="hover:text-[#2bd5d5] transition-colors">Popular Manga</button></li>
+              <li><button onClick={onNavigateLatest} className="hover:text-[#2bd5d5] transition-colors">Latest Updates</button></li>
+              <li><button onClick={onNavigateBrowse} className="hover:text-[#2bd5d5] transition-colors">Browse All</button></li>
+              <li><button onClick={onNavigateBookmarks} className="hover:text-[#2bd5d5] transition-colors">My Bookmarks</button></li>
             </ul>
           </div>
 

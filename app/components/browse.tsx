@@ -77,6 +77,9 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
   const [loadingMore, setLoadingMore] = useState(false);
   const [status, setStatus] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("relevance");
+  const [trendingPeriod, setTrendingPeriod] = useState<'weekly' | 'monthly' | 'all'>('weekly');
+  const [trendingManga, setTrendingManga] = useState<MangaItem[]>([]);
+  const [trendingLoading, setTrendingLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
@@ -138,25 +141,56 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
       .finally(() => setLoadingMore(false));
   }, [offset, query, status, sortBy, genreMode, selectedGenre, hideFilters]);
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-      {!hideFilters && (
-        <aside className="w-full lg:w-64 flex-shrink-0">
-          <div className="lg:sticky lg:top-24 space-y-4 lg:space-y-6">
-            <div className="p-3 lg:p-4 rounded-lg bg-[#0a0a0a]/60 border border-[#2bd5d5]/20">
-              <h3 className="text-base lg:text-lg font-bold text-[#2bd5d5] mb-3 lg:mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                </svg>
-                Filters
-              </h3>
+  // Fetch trending manga
+  useEffect(() => {
+    let mounted = true;
+    setTrendingLoading(true);
 
-              <div className="mb-4">
-                <label className="block text-xs text-[#93a9a9] mb-2 font-semibold">Status</label>
+    const trendingUrl = new URL("/api/manga", typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+    trendingUrl.searchParams.set("limit", "10");
+    trendingUrl.searchParams.set("offset", "0");
+    trendingUrl.searchParams.set("includes[]", "cover_art");
+    trendingUrl.searchParams.set("contentRating[]", "safe");
+    trendingUrl.searchParams.set("contentRating[]", "suggestive");
+    
+    // Set order based on trending period
+    if (trendingPeriod === 'weekly' || trendingPeriod === 'monthly') {
+      trendingUrl.searchParams.set("order[followedCount]", "desc");
+    } else {
+      trendingUrl.searchParams.set("order[rating]", "desc");
+    }
+
+    fetchJsonCached(trendingUrl.toString())
+      .then((data) => {
+        if (!mounted) return;
+        setTrendingManga(data.data || []);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch trending manga:", error);
+        if (mounted) setTrendingManga([]);
+      })
+      .finally(() => {
+        if (mounted) setTrendingLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [trendingPeriod]);
+
+  return (
+    <div className="space-y-6">
+      {/* Top Filters Bar */}
+      {!hideFilters && (
+        <div className="bg-[#0a0a0a] border border-gray-800 rounded-lg p-4">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full md:w-auto">
+              <div className="flex-1 sm:flex-initial sm:w-48">
+                <label className="block text-xs text-gray-400 mb-2 font-medium">Status</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-3 py-2 rounded bg-[#040506] border border-[#2bd5d5]/30 text-[#e6f7f7] text-sm focus:outline-none focus:border-[#2bd5d5] transition-colors"
+                  className="w-full px-3 py-2 rounded bg-[#040506] border border-gray-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2bd5d5] focus:border-transparent transition-all"
                 >
                   <option value="all">All Status</option>
                   <option value="ongoing">Ongoing</option>
@@ -166,12 +200,12 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs text-[#93a9a9] mb-2 font-semibold">Sort By</label>
+              <div className="flex-1 sm:flex-initial sm:w-48">
+                <label className="block text-xs text-gray-400 mb-2 font-medium">Sort By</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-3 py-2 rounded bg-[#040506] border border-[#2bd5d5]/30 text-[#e6f7f7] text-sm focus:outline-none focus:border-[#2bd5d5] transition-colors"
+                  className="w-full px-3 py-2 rounded bg-[#040506] border border-gray-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2bd5d5] focus:border-transparent transition-all"
                 >
                   <option value="relevance">Relevance</option>
                   <option value="popular">Most Popular</option>
@@ -179,77 +213,199 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
                   <option value="title">Title (A-Z)</option>
                 </select>
               </div>
-              
-              <div className="flex items-center gap-3 mt-3 lg:mt-4">
-                <button
-                  onClick={() => {
-                    setStatus("all");
-                    setSortBy("relevance");
-                  }}
-                  className="flex-1 lg:w-full px-2 lg:px-3 py-1.5 lg:py-2 rounded bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 text-[#2bd5d5] text-xs lg:text-sm font-semibold hover:bg-[#2bd5d5]/20 transition-colors"
-                >
-                  Reset
-                </button>
-                <div className="flex-1 lg:hidden px-2 py-1.5 rounded bg-[#2bd5d5]/5 border border-[#2bd5d5]/20 text-center">
-                  <p className="text-xs text-[#93a9a9]">
-                    <span className="font-bold text-[#2bd5d5]">{manga.length}</span> found
-                  </p>
-                </div>
-              </div>
             </div>
 
-            <div className="hidden lg:block p-4 rounded-lg bg-[#2bd5d5]/5 border border-[#2bd5d5]/20">
-              <p className="text-sm text-[#93a9a9]">
-                <span className="font-bold text-[#2bd5d5]">{manga.length}</span> manga found
-              </p>
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <button
+                onClick={() => {
+                  setStatus("all");
+                  setSortBy("relevance");
+                }}
+                className="px-4 py-2 rounded bg-[#040506] border border-gray-800 text-gray-400 text-sm font-medium hover:bg-[#0a0a0a] hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-[#2bd5d5]"
+                aria-label="Reset filters"
+              >
+                Reset
+              </button>
+              <div className="px-4 py-2 rounded bg-[#040506] border border-gray-800">
+                <p className="text-sm text-gray-400">
+                  <span className="font-bold text-[#2bd5d5]">{manga.length}</span> found
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content with Trending Sidebar */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Main Content Area */}
+        <section className="flex-1 min-w-0">
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="bg-[#0a0a0a] rounded-lg border border-gray-800 overflow-hidden">
+                  <div className="flex gap-3 p-3">
+                    <div className="flex-shrink-0 w-24 h-32 bg-gray-800 rounded animate-pulse" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-5 bg-gray-800 rounded w-3/4 animate-pulse" />
+                      <div className="h-3 bg-gray-800 rounded w-1/2 animate-pulse" />
+                      <div className="h-3 bg-gray-800 rounded w-full animate-pulse" />
+                      <div className="h-3 bg-gray-800 rounded w-full animate-pulse" />
+                      <div className="flex gap-1 mt-2">
+                        <div className="h-5 w-12 bg-gray-800 rounded-full animate-pulse" />
+                        <div className="h-5 w-16 bg-gray-800 rounded-full animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {!loading && manga.length === 0 && (
+            <EmptyState
+              title="No results"
+              description="We couldn't find any manga matching your search or filters. Try clearing filters or search terms."
+              actionLabel="Reset filters"
+              onAction={() => {
+                setStatus("all");
+                setSortBy("relevance");
+                setOffset(0);
+              }}
+            />
+          )}
+          
+          {!loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              {manga.map((m) => (
+                <MangaCard key={m.id} manga={m} onOpen={onSelectManga || (() => {})} />
+              ))}
+            </div>
+          )}
+
+          {!loading && hasMore && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="px-8 py-3 rounded-lg bg-[#2bd5d5]/10 border-2 border-[#2bd5d5]/30 text-[#2bd5d5] font-bold hover:bg-[#2bd5d5]/20 hover:border-[#2bd5d5]/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#2bd5d5]"
+                aria-label="Load more manga"
+              >
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  "Load More"
+                )}
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Trending Sidebar */}
+        <aside className="w-full lg:w-80 flex-shrink-0">
+          <div className="bg-[#0a0a0a] border border-gray-800 rounded-lg overflow-hidden">
+            <div className="p-4 border-b border-gray-800">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#2bd5d5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                Trending
+              </h3>
+            </div>
+
+            {/* Period Tabs */}
+            <div className="flex border-b border-gray-800">
+              {(['weekly', 'monthly', 'all'] as const).map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setTrendingPeriod(period)}
+                  className={`flex-1 px-4 py-3 text-sm font-medium transition-colors focus:outline-none ${
+                    trendingPeriod === period
+                      ? 'bg-[#040506] text-[#2bd5d5] border-b-2 border-[#2bd5d5]'
+                      : 'text-gray-400 hover:text-white hover:bg-[#0a0a0a]/50'
+                  }`}
+                  aria-label={`Show ${period} trending`}
+                  aria-pressed={trendingPeriod === period}
+                >
+                  {period.charAt(0).toUpperCase() + period.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Trending Content */}
+            <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
+              {trendingLoading ? (
+                [...Array(10)].map((_, i) => (
+                  <div key={i} className="flex gap-3 p-3 rounded bg-[#040506] border border-gray-800">
+                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded bg-gray-800 animate-pulse" />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="h-4 bg-gray-800 rounded w-3/4 animate-pulse" />
+                      <div className="h-3 bg-gray-800 rounded w-1/2 animate-pulse" />
+                    </div>
+                  </div>
+                ))
+              ) : trendingManga.length === 0 ? (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  No trending manga available
+                </div>
+              ) : (
+                trendingManga.map((m, i) => {
+                  const title = m.attributes?.title?.en || m.attributes?.title?.['ja-ro'] || m.attributes?.title?.[Object.keys(m.attributes?.title || {})[0]] || 'Unknown Title';
+                  const description = m.attributes?.description?.en || m.attributes?.description?.[Object.keys(m.attributes?.description || {})[0]] || '';
+                  const year = m.attributes?.year || 'N/A';
+                  const status = m.attributes?.status || '';
+                  
+                  const coverRel = m.relationships?.find((r: any) => r.type === 'cover_art');
+                  const coverFilename = coverRel?.attributes?.fileName;
+                  const coverUrl = coverFilename ? `https://uploads.mangadex.org/covers/${m.id}/${coverFilename}.256.jpg` : '/placeholder.jpg';
+                  
+                  return (
+                    <div 
+                      key={m.id} 
+                      onClick={() => onSelectManga?.(m.id)}
+                      className="flex gap-3 p-3 rounded bg-[#040506] border border-gray-800 hover:border-[#2bd5d5]/30 hover:bg-[#0a0a0a] transition-all cursor-pointer group"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          onSelectManga?.(m.id);
+                        }
+                      }}
+                    >
+                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded bg-[#2bd5d5]/10 text-[#2bd5d5] font-bold text-xs group-hover:bg-[#2bd5d5]/20 transition-colors">
+                        {i + 1}
+                      </div>
+                      <div className="flex-shrink-0 w-12 h-16 rounded overflow-hidden border border-gray-800 bg-gray-900">
+                        <img 
+                          src={coverUrl} 
+                          alt={title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-white text-sm truncate group-hover:text-[#2bd5d5] transition-colors">
+                          {title}
+                        </h4>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {year}{status ? ` • ${status.charAt(0).toUpperCase() + status.slice(1)}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </aside>
-      )}
-
-      <section className="flex-1">
-        {loading && <div className="text-[#93a9a9] text-sm">Loading…</div>}
-        
-        {!loading && manga.length === 0 && (
-          <EmptyState
-            title="No results"
-            description="We couldn't find any manga matching your search or filters. Try clearing filters or search terms."
-            actionLabel="Reset filters"
-            onAction={() => {
-              setStatus("all");
-              setSortBy("relevance");
-              setOffset(0);
-            }}
-          />
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 w-full">
-          {manga.map((m) => (
-            <MangaCard key={m.id} manga={m} onOpen={onSelectManga || (() => {})} />
-          ))}
-        </div>
-
-        {!loading && hasMore && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={loadMore}
-              disabled={loadingMore}
-              className="px-8 py-3 rounded-lg bg-[#2bd5d5]/10 border-2 border-[#2bd5d5]/30 text-[#2bd5d5] font-bold hover:bg-[#2bd5d5]/20 hover:border-[#2bd5d5]/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingMore ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Loading...
-                </span>
-              ) : (
-                "Load More"
-              )}
-            </button>
-          </div>
-        )}
-      </section>
+      </div>
     </div>
   );
 }
