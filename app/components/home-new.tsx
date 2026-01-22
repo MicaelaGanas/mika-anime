@@ -367,7 +367,7 @@ export default function Home() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#2bd5d5]/50 to-transparent z-10" />
               <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#2bd5d5]/50 to-transparent z-10" />
               
-              <div className="relative z-20 max-w-7xl mx-auto h-full flex items-center gap-3 md:gap-6 lg:gap-8 px-3 md:px-6 lg:px-8">
+              <div className="relative z-20 max-w-7xl mx-auto h-full flex items-center justify-between gap-3 md:gap-6 lg:gap-8 px-3 md:px-6 lg:px-8">
                 <div key={`text-${featuredIndex}`} className="flex-1 max-w-2xl space-y-1.5 md:space-y-3 lg:space-y-4 animate-slideIn">
                   <div className="relative inline-block">
                     <div className="absolute inset-0 bg-[#2bd5d5]/30 blur-xl rounded-full" />

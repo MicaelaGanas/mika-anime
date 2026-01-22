@@ -8,7 +8,7 @@ export default function Footer({ onNavigatePopular, onNavigateLatest, onNavigate
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-4 sm:mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent mb-2">Mikareads</h2>
+            <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent mb-2">NyaaReads</h2>
             <p className="text-xs sm:text-sm text-[#93a9a9] mb-3">Your destination for reading manga online. Discover, read, and enjoy thousands of titles.</p>
             <div className="flex gap-3">
               <a href="#" className="text-[#2bd5d5] hover:text-[#19bfbf] transition-colors">
@@ -45,7 +45,7 @@ export default function Footer({ onNavigatePopular, onNavigateLatest, onNavigate
         </div>
 
         <div className="border-t border-[#2bd5d5]/20 pt-4 sm:pt-6">
-          <p className="text-center text-xs sm:text-sm text-[#93a9a9]">© {new Date().getFullYear()} Mikareads. All rights reserved. Powered by MangaDex API.</p>
+          <p className="text-center text-xs sm:text-sm text-[#93a9a9]">© {new Date().getFullYear()} NyaaReads. All rights reserved. Powered by MangaDex API.</p>
         </div>
       </div>
     </footer>

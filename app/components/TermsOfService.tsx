@@ -16,7 +16,7 @@ export default function TermsOfService() {
           1. Acceptance of Terms
         </h2>
         <p className="text-gray-300 leading-relaxed">
-          By accessing and using MikaReads (the "Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
+          By accessing and using NyaaReads (the "Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
         </p>
       </section>
 
@@ -26,7 +26,7 @@ export default function TermsOfService() {
           2. Description of Service
         </h2>
         <p className="text-gray-300 leading-relaxed">
-          MikaReads is a manga reading platform that aggregates content from MangaDex and other publicly available sources. We do not host any manga content on our servers. All manga content is provided through the MangaDex API and is subject to their terms and conditions.
+          NyaaReads is a manga reading platform that aggregates content from MangaDex and other publicly available sources. We do not host any manga content on our servers. All manga content is provided through the MangaDex API and is subject to their terms and conditions.
         </p>
       </section>
 
@@ -96,7 +96,7 @@ export default function TermsOfService() {
           7. Limitation of Liability
         </h2>
         <p className="text-gray-300 leading-relaxed">
-          In no event shall MikaReads, its developers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use or inability to use the Service.
+          In no event shall NyaaReads, its developers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use or inability to use the Service.
         </p>
       </section>
 
@@ -126,7 +126,7 @@ export default function TermsOfService() {
           10. Educational Purpose
         </h2>
         <p className="text-gray-300 leading-relaxed">
-          MikaReads is an educational project created for learning purposes. It is not intended for commercial use. Users are encouraged to support official manga releases and creators.
+          NyaaReads is an educational project created for learning purposes. It is not intended for commercial use. Users are encouraged to support official manga releases and creators.
         </p>
       </section>
 
@@ -142,7 +142,7 @@ export default function TermsOfService() {
 
       <div className="bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 rounded-lg p-6 mt-8">
         <p className="text-sm text-gray-300 text-center">
-          By using MikaReads, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+          By using NyaaReads, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
         </p>
       </div>
     </div>

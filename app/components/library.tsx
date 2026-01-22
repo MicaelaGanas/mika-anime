@@ -71,20 +71,29 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
   const [manga, setManga] = useState<any[]>([]);
   const [selectedManga, setSelectedManga] = useState<string | null>(null);
   const [librarySection, setLibrarySection] = useState<"popular" | "latest" | "browse" | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  const LIMIT = section === "browse" ? 36 : 24;
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
+    setOffset(0);
+    setManga([]);
 
     const url = new URL("/api/manga", window.location.origin);
     
     if (section === "popular") {
-      url.searchParams.append("limit", "24");
+      url.searchParams.append("limit", String(LIMIT));
       url.searchParams.append("order[followedCount]", "desc");
     } else if (section === "latest") {
-      url.searchParams.append("limit", "24");
+      url.searchParams.append("limit", String(LIMIT));
       url.searchParams.append("order[latestUploadedChapter]", "desc");
     } else if (section === "browse") {
-      url.searchParams.append("limit", "36");
+      url.searchParams.append("limit", String(LIMIT));
       url.searchParams.append("order[createdAt]", "desc");
     }
     
@@ -94,11 +103,50 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
     
     fetch(url)
       .then(r => r.json())
-      .then(d => { if (mounted) setManga(d.data || []); })
-      .catch(() => {});
+      .then(d => { 
+        if (mounted) {
+          const data = d.data || [];
+          setManga(data);
+          setHasMore(d.total > LIMIT);
+          setLoading(false);
+        }
+      })
+      .catch(() => { if (mounted) setLoading(false); });
 
     return () => { mounted = false; };
-  }, [section]);
+  }, [section, LIMIT]);
+
+  const loadMore = () => {
+    const newOffset = offset + LIMIT;
+    setLoadingMore(true);
+
+    const url = new URL("/api/manga", window.location.origin);
+    url.searchParams.append("limit", String(LIMIT));
+    url.searchParams.append("offset", String(newOffset));
+    
+    if (section === "popular") {
+      url.searchParams.append("order[followedCount]", "desc");
+    } else if (section === "latest") {
+      url.searchParams.append("order[latestUploadedChapter]", "desc");
+    } else if (section === "browse") {
+      url.searchParams.append("order[createdAt]", "desc");
+    }
+    
+    url.searchParams.append("includes[]", "cover_art");
+    url.searchParams.append("contentRating[]", "safe");
+    url.searchParams.append("contentRating[]", "suggestive");
+    
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        const newData = d.data || [];
+        setManga(prev => [...prev, ...newData]);
+        setOffset(newOffset);
+        setHasMore(newOffset + LIMIT < d.total);
+        setLoadingMore(false);
+      })
+      .catch(() => setLoadingMore(false));
+  };
 
   if (showBookmarks) {
     return (
@@ -182,7 +230,7 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
 
           {/* Manga Grid */}
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-            {manga.length === 0 ? (
+            {loading && manga.length === 0 ? (
               [...Array(24)].map((_, i) => (
                 <div key={i} className="w-full h-[170px] sm:h-[215px] md:h-[260px] bg-gray-800 rounded-lg sm:rounded-xl animate-pulse" />
               ))
@@ -192,6 +240,29 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
               ))
             )}
           </div>
+
+          {/* Load More Button */}
+          {!loading && hasMore && (
+            <div className="flex justify-center mt-8 sm:mt-12">
+              <button
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="px-8 py-3 rounded-lg bg-[#2bd5d5]/10 border-2 border-[#2bd5d5]/30 text-[#2bd5d5] font-bold hover:bg-[#2bd5d5]/20 hover:border-[#2bd5d5]/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#2bd5d5]"
+              >
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  "Load More"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

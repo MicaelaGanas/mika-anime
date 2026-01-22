@@ -39,7 +39,10 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    onSearch?.(searchValue);
+    if (searchValue.trim()) {
+      onSearch?.(searchValue.trim());
+      setSearchOpen(false);
+    }
   }, [onSearch, searchValue]);
 
   return (
@@ -52,28 +55,19 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
         onMouseLeave={() => setIsHoveringTop(false)}
       >
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8">
           <div className="flex items-center gap-2 sm:gap-4">
             <button onClick={onNavigateHome} className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity">
-              <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                <defs>
-                  <linearGradient id="mkGradient" x1="0" x2="1">
-                    <stop offset="0" stopColor="#2bd5d5" />
-                    <stop offset="1" stopColor="#19bfbf" />
-                  </linearGradient>
-                </defs>
-                <rect width="64" height="64" rx="12" fill="#040506" />
-                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fontSize="28" fill="url(#mkGradient)">M</text>
-              </svg>
+              <img src="/cat.ico" alt="NyaaReads Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">Mikareads</h1>
+                <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">NyaaReads</h1>
                 <span className="text-[8px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
               </div>
             </button>
           </div>
 
           {/* Quick Nav Links - Desktop */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 ml-4">
             <button onClick={onNavigateHome} className={`relative px-3 py-1.5 text-sm transition-all ${activePage === "home" ? "text-[#2bd5d5]" : "text-[#e6f7f7] hover:text-[#2bd5d5]"} hover:bg-[#2bd5d5]/10 rounded-lg`}>
               Home
               {activePage === "home" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2bd5d5] to-transparent" />}

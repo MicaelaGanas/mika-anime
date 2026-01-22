@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
 
       <div className="bg-[#2bd5d5]/10 border border-[#2bd5d5]/30 rounded-lg p-6 mb-8">
         <p className="text-gray-300 leading-relaxed">
-          <strong className="text-white">TL;DR:</strong> MikaReads does not collect, store, or share any personal information. All your data stays on your device. We don't use cookies, analytics, or tracking of any kind.
+          <strong className="text-white">TL;DR:</strong> NyaaReads does not collect, store, or share any personal information. All your data stays on your device. We don't use cookies, analytics, or tracking of any kind.
         </p>
       </div>
 
@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
         <div className="text-gray-300 leading-relaxed space-y-3">
           <p className="font-semibold text-white">We do not collect any personal information.</p>
           <p>
-            MikaReads is designed with privacy in mind. We do not have user accounts, databases, or any backend infrastructure that collects user data.
+            NyaaReads is designed with privacy in mind. We do not have user accounts, databases, or any backend infrastructure that collects user data.
           </p>
         </div>
       </section>
@@ -166,7 +166,7 @@ export default function PrivacyPolicy() {
           11. Open Source
         </h2>
         <p className="text-gray-300 leading-relaxed">
-          MikaReads is an open-source project. You can review our code to verify our privacy practices. We believe in transparency and welcome community audits of our privacy claims.
+          NyaaReads is an open-source project. You can review our code to verify our privacy practices. We believe in transparency and welcome community audits of our privacy claims.
         </p>
       </section>
 
@@ -188,7 +188,7 @@ export default function PrivacyPolicy() {
           Summary
         </h3>
         <p className="text-sm text-gray-300">
-          Your privacy is important. MikaReads is designed to be privacy-first: no tracking, no data collection, no cookies. Everything stays on your device.
+          Your privacy is important. NyaaReads is designed to be privacy-first: no tracking, no data collection, no cookies. Everything stays on your device.
         </p>
       </div>
     </div>
