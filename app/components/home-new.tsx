@@ -265,11 +265,15 @@ export default function Home() {
             </section>
           ) : featured && (
             <section className="relative h-[300px] md:h-[450px] lg:h-[600px] mb-6 md:mb-12 overflow-hidden mt-16 md:mt-20">
-              <div 
-                key={featuredIndex}
-                className="absolute inset-0 bg-cover bg-center blur-md scale-110 opacity-40 animate-fadeIn"
-                style={{ backgroundImage: `url(${getFeaturedCover()})` }}
-              />
+              {/* Background image using img tag instead of background-image for proper proxying */}
+              <div className="absolute inset-0 overflow-hidden">
+                <LazyImage
+                  key={featuredIndex}
+                  src={getFeaturedCover()}
+                  alt={featuredTitle}
+                  className="w-full h-full object-cover blur-md scale-110 opacity-40 animate-fadeIn"
+                />
+              </div>
               
               <div className="absolute inset-0 bg-gradient-to-l from-black via-black/90 to-black/60 z-10" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
@@ -333,11 +337,12 @@ export default function Home() {
                   
                   <div className="relative w-[100px] md:w-[180px] lg:w-[280px] h-[140px] md:h-[270px] lg:h-[400px] rounded-lg md:rounded-xl overflow-hidden shadow-2xl shadow-[#2bd5d5]/20 border-2 border-[#2bd5d5]/50 hover:border-[#2bd5d5] transition-all hover:scale-105 group">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                    {getFeaturedCover() ? (
-                      <img src={getFeaturedCover()} alt={featuredTitle} loading="lazy" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-gray-900 flex items-center justify-center text-gray-500">No cover</div>
-                    )}
+                    <LazyImage
+                      src={getFeaturedCover()}
+                      alt={featuredTitle}
+                      className="w-full h-full object-cover"
+                      fallback={<div className="w-full h-full bg-gray-900 flex items-center justify-center text-gray-500">No cover</div>}
+                    />
                   </div>
                 </div>
               </div>
