@@ -28,7 +28,7 @@ export default function LazyImage({ src, alt, className = "", fallback }: LazyIm
         });
       },
       {
-        rootMargin: '50px', // Start loading 50px before image is visible
+        rootMargin: '50px',
         threshold: 0.01,
       }
     );

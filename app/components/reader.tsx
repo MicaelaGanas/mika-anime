@@ -52,7 +52,7 @@ export default function Reader({ chapterId, onClose, chapters = [], onRequestCha
             setPages(imgs);
             return;
           } else {
-            console.warn('Missing required fields:', { hasBase: !!base, hasHash: !!hash, filesCount: files?.length }); // DEBUG
+            console.warn('Missing required fields:', { hasBase: !!base, hasHash: !!hash, filesCount: files?.length });
             setPages([]);
             return;
           }

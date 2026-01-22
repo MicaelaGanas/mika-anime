@@ -93,7 +93,6 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
       .then((data) => {
         if (!mounted) return;
         const list = data.data || [];
-        // If query provided and no results, try a broader fallback (increase limit, remove contentRating filters)
         if (q && list.length === 0) {
           try {
             const fallbackUrl = new URL("/api/manga", typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
@@ -101,7 +100,6 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
             fallbackUrl.searchParams.set("offset", String(0));
             fallbackUrl.searchParams.set("includes[]", "cover_art");
             fallbackUrl.searchParams.set("title", q);
-            // broad search without contentRating filters
             fetchJsonCached(fallbackUrl.toString()).then((fb) => {
               if (!mounted) return;
               setManga(fb.data || []);
@@ -141,7 +139,6 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
       .finally(() => setLoadingMore(false));
   }, [offset, query, status, sortBy, genreMode, selectedGenre, hideFilters]);
 
-  // Fetch trending manga
   useEffect(() => {
     let mounted = true;
     setTrendingLoading(true);
@@ -153,7 +150,6 @@ export default function Browse({ query = "", onSelectManga, genreMode, selectedG
     trendingUrl.searchParams.set("contentRating[]", "safe");
     trendingUrl.searchParams.set("contentRating[]", "suggestive");
     
-    // Set order based on trending period
     if (trendingPeriod === 'weekly' || trendingPeriod === 'monthly') {
       trendingUrl.searchParams.set("order[followedCount]", "desc");
     } else {

@@ -12,7 +12,6 @@ export default function BookmarkButton({ mangaId, title, coverUrl }: BookmarkBut
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
-    // Check if already bookmarked
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
     setIsBookmarked(bookmarks.some((b: any) => b.id === mangaId));
   }, [mangaId]);
@@ -21,12 +20,10 @@ export default function BookmarkButton({ mangaId, title, coverUrl }: BookmarkBut
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
     
     if (isBookmarked) {
-      // Remove bookmark
       const filtered = bookmarks.filter((b: any) => b.id !== mangaId);
       localStorage.setItem('bookmarks', JSON.stringify(filtered));
       setIsBookmarked(false);
     } else {
-      // Add bookmark
       bookmarks.push({
         id: mangaId,
         title,

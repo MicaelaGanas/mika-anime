@@ -39,7 +39,6 @@ export default function Series({ id }: { id: string }) {
       })
       .catch(() => setLoadingData(false));
 
-    // Fetch chapters with optimized pagination
     const fetchAllChapters = async () => {
       let allChapters: any[] = [];
       let offset = 0;
@@ -68,20 +67,17 @@ export default function Series({ id }: { id: string }) {
           const list = d.data || [];
           allChapters = [...allChapters, ...list];
           
-          // Update UI immediately with first batch
           if (isFirstBatch) {
             setChapters([...allChapters]);
             setLoadingChapters(false);
             isFirstBatch = false;
           }
           
-          // Check if there are more chapters to fetch
           const total = d.total || 0;
           if (allChapters.length >= total || list.length < limit) {
             hasMore = false;
           } else {
             offset += limit;
-            // Small delay to avoid rate limiting
             await new Promise(resolve => setTimeout(resolve, 100));
           }
         } catch (err) {
@@ -227,24 +223,19 @@ export default function Series({ id }: { id: string }) {
     );
   }
 
-  // Skeleton loading UI
   if (loadingData || loadingChapters) {
     return (
       <div className="min-h-screen bg-[#040506]">
         <Header onToggleBookmarks={() => setShowBookmarks(true)} />
         <div className="px-4 sm:px-6 lg:px-8 py-6 pt-12 sm:pt-14 max-w-7xl mx-auto">
-          {/* Back button skeleton */}
           <div className="h-8 w-32 bg-gray-800 rounded mb-4 sm:mb-6 animate-pulse" />
           <div className="flex flex-col md:flex-row gap-6 mb-8">
-            {/* Cover skeleton */}
             <div className="flex-shrink-0">
               <div className="w-full md:w-[280px] h-[400px] bg-gray-800 rounded-lg animate-pulse" />
             </div>
             
-            {/* Info skeleton */}
             <div className="flex-1">
               <div className="h-8 bg-gray-800 rounded w-3/4 mb-4 animate-pulse" />
-              {/* Stats grid skeleton */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 mb-4">
                 <div className="h-16 bg-gray-800 rounded-lg animate-pulse" />
                 <div className="h-16 bg-gray-800 rounded-lg animate-pulse" />
