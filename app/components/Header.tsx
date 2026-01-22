@@ -55,12 +55,12 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
       >
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8">
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={onNavigateHome} className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity">
-              <img src="/cat.ico" alt="NyaaReads Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+          <div className="flex items-center gap-1 sm:gap-4">
+            <button onClick={onNavigateHome} className="flex items-center gap-1 sm:gap-4 hover:opacity-80 transition-opacity">
+              <img src="/cat.ico" alt="NyaaReads Logo" className="w-6 h-6 sm:w-10 sm:h-10 object-contain" />
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">NyaaReads</h1>
-                <span className="text-[8px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
+                <h1 className="text-base sm:text-2xl font-black bg-gradient-to-r from-[#2bd5d5] to-[#19bfbf] bg-clip-text text-transparent leading-none">NyaaReads</h1>
+                <span className="text-[7px] sm:text-[10px] text-[#93a9a9] tracking-wider uppercase">Read • Discover • Enjoy</span>
               </div>
             </button>
           </div>
@@ -93,10 +93,10 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search manga..."
-                className="w-full px-4 py-2 bg-[#0a0a0a]/80 border border-[#2bd5d5]/30 rounded-full text-[#e6f7f7] placeholder-[#93a9a9] focus:outline-none focus:border-[#2bd5d5] transition-colors"
+                className="w-full px-3 py-1.5 bg-[#0a0a0a]/80 border border-[#2bd5d5]/30 rounded-full text-[#e6f7f7] placeholder-[#93a9a9] focus:outline-none focus:border-[#2bd5d5] transition-colors text-sm"
               />
               <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#2bd5d5] hover:text-[#19bfbf]">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
@@ -108,23 +108,22 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
             {/* Mobile search button */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="md:hidden flex items-center justify-center p-2 rounded-full border border-[#2bd5d5]/20 text-[#aeeeee] bg-[#0a0a0a]/40 hover:bg-[#052424] transition-all"
+              className="md:hidden flex items-center justify-center p-1 rounded-full border border-[#2bd5d5]/20 text-[#aeeeee] bg-[#0a0a0a]/40 hover:bg-[#052424] transition-all"
               aria-label="Open search"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            {/* Hamburger Menu */}
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
+                className="flex items-center gap-1 px-2 py-1 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <span className="text-sm font-medium hidden sm:inline">Genres</span>
+                <span className="text-xs font-medium hidden sm:inline">Genres</span>
               </button>
               
               {/* Dropdown */}
@@ -154,24 +153,22 @@ export default function Header({ onToggleBookmarks, onSearch, onGenreSelect, onN
 
             <button
               onClick={onToggleBookmarks}
-              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
+              className="flex items-center gap-1 sm:gap-2 px-1 sm:px-4 py-1 sm:py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
               <span className="text-xs sm:text-sm font-medium hidden sm:inline">Library</span>
             </button>
-
-            {/* Info Menu Button */}
             <div className="relative">
               <button
                 onClick={() => setInfoMenuOpen(!infoMenuOpen)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
+                className="flex items-center gap-1 px-2 py-1 rounded-full border border-[#2bd5d5]/30 text-[#aeeeee] bg-[#0a0a0a]/60 hover:bg-[#052424] hover:border-[#2bd5d5] transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm font-medium hidden sm:inline">Info</span>
+                <span className="text-xs font-medium hidden sm:inline">Info</span>
               </button>
               
               {/* Info Dropdown */}
