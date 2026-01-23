@@ -26,7 +26,6 @@ ${message}
     const { data, error } = await resend.emails.send({
       from: "NyaaReads Contact <onboarding@resend.dev>",
       to: "myganas@mcm.edu.ph",
-      replyTo: email,
       subject: `[NyaaReads] ${subject}`,
       html: `
         <h2>New Contact Form Submission</h2>
