@@ -99,6 +99,25 @@ export default function Home() {
     setIsSearchMode(false);
     setQuery("");
     setSelectedManga(null);
+    setShowBookmarks(false);
+    setShowAbout(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setLibrarySection(null);
+  };
+
+  const handleToggleBookmarks = () => {
+    setShowBookmarks(s => !s);
+    setShowAbout(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setLibrarySection(null);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
   };
 
   const handleBackToHome = () => {
@@ -110,6 +129,99 @@ export default function Home() {
     setShowTerms(false);
     setShowPrivacy(false);
     setShowContact(false);
+    setLibrarySection(null);
+    setSelectedManga(null);
+  };
+
+  const handleNavigatePopular = () => {
+    setLibrarySection("popular");
+    setShowBookmarks(false);
+    setShowAbout(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigateLatest = () => {
+    setLibrarySection("latest");
+    setShowBookmarks(false);
+    setShowAbout(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigateBrowse = () => {
+    setLibrarySection("browse");
+    setShowBookmarks(false);
+    setShowAbout(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigateAbout = () => {
+    setShowAbout(true);
+    setShowBookmarks(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setLibrarySection(null);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigateTerms = () => {
+    setShowTerms(true);
+    setShowAbout(false);
+    setShowBookmarks(false);
+    setShowPrivacy(false);
+    setShowContact(false);
+    setLibrarySection(null);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigatePrivacy = () => {
+    setShowPrivacy(true);
+    setShowAbout(false);
+    setShowBookmarks(false);
+    setShowTerms(false);
+    setShowContact(false);
+    setLibrarySection(null);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
+  };
+
+  const handleNavigateContact = () => {
+    setShowContact(true);
+    setShowAbout(false);
+    setShowBookmarks(false);
+    setShowTerms(false);
+    setShowPrivacy(false);
+    setLibrarySection(null);
+    setIsSearchMode(false);
+    setSelectedGenre(null);
+    setQuery("");
+    setSelectedManga(null);
   };
 
   useEffect(() => {
@@ -173,20 +285,39 @@ export default function Home() {
   const featuredDesc = featured?.attributes?.description?.en || "";
 
   if (librarySection) {
-    return <Library section={librarySection} onNavigateHome={() => setLibrarySection(null)} />;
+    return <Library 
+      section={librarySection} 
+      onNavigateHome={handleBackToHome}
+      onNavigatePopular={handleNavigatePopular}
+      onNavigateLatest={handleNavigateLatest}
+      onNavigateBrowse={handleNavigateBrowse}
+      onNavigateAbout={handleNavigateAbout}
+      onNavigateTerms={handleNavigateTerms}
+      onNavigatePrivacy={handleNavigatePrivacy}
+      onNavigateContact={handleNavigateContact}
+      onToggleBookmarks={() => { setLibrarySection(null); setShowBookmarks(true); }}
+      onSearch={handleSearch}
+      onGenreSelect={(genre) => {
+        setLibrarySection(null);
+        setSelectedGenre(genre);
+        setIsSearchMode(false);
+        setQuery("");
+        setSelectedManga(null);
+      }}
+    />;
   }
 
   if (showAbout) {
     return (
       <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
         <Header 
-          onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+          onToggleBookmarks={handleToggleBookmarks} 
           onSearch={handleSearch} 
           onGenreSelect={handleGenreSelect}
           onNavigateHome={handleBackToHome}
-          onNavigatePopular={() => setLibrarySection("popular")}
-          onNavigateLatest={() => setLibrarySection("latest")}
-          onNavigateBrowse={() => setLibrarySection("browse")}
+          onNavigatePopular={handleNavigatePopular}
+          onNavigateLatest={handleNavigateLatest}
+          onNavigateBrowse={handleNavigateBrowse}
           onNavigateAbout={() => setShowAbout(true)}
           onNavigateTerms={() => { setShowAbout(false); setShowTerms(true); }}
           onNavigatePrivacy={() => { setShowAbout(false); setShowPrivacy(true); }}
@@ -197,9 +328,9 @@ export default function Home() {
           <About />
         </main>
         <Footer 
-          onNavigatePopular={() => setLibrarySection("popular")} 
-          onNavigateLatest={() => setLibrarySection("latest")} 
-          onNavigateBrowse={() => setLibrarySection("browse")} 
+          onNavigatePopular={handleNavigatePopular} 
+          onNavigateLatest={handleNavigateLatest} 
+          onNavigateBrowse={handleNavigateBrowse} 
           onNavigateBookmarks={() => setShowBookmarks(true)}
           onNavigateAbout={() => setShowAbout(true)}
           onNavigateTerms={() => { setShowAbout(false); setShowPrivacy(false); setShowContact(false); setShowTerms(true); }}
@@ -214,13 +345,13 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
         <Header 
-          onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+          onToggleBookmarks={handleToggleBookmarks} 
           onSearch={handleSearch} 
           onGenreSelect={handleGenreSelect}
           onNavigateHome={handleBackToHome}
-          onNavigatePopular={() => setLibrarySection("popular")}
-          onNavigateLatest={() => setLibrarySection("latest")}
-          onNavigateBrowse={() => setLibrarySection("browse")}
+          onNavigatePopular={handleNavigatePopular}
+          onNavigateLatest={handleNavigateLatest}
+          onNavigateBrowse={handleNavigateBrowse}
           onNavigateAbout={() => { setShowTerms(false); setShowPrivacy(false); setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => setShowTerms(true)}
           onNavigatePrivacy={() => { setShowTerms(false); setShowAbout(false); setShowContact(false); setShowPrivacy(true); }}
@@ -231,9 +362,9 @@ export default function Home() {
           <TermsOfService />
         </main>
         <Footer 
-          onNavigatePopular={() => setLibrarySection("popular")} 
-          onNavigateLatest={() => setLibrarySection("latest")} 
-          onNavigateBrowse={() => setLibrarySection("browse")} 
+          onNavigatePopular={handleNavigatePopular} 
+          onNavigateLatest={handleNavigateLatest} 
+          onNavigateBrowse={handleNavigateBrowse} 
           onNavigateBookmarks={() => setShowBookmarks(true)}
           onNavigateAbout={() => { setShowTerms(false); setShowPrivacy(false); setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => setShowTerms(true)}
@@ -248,13 +379,13 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
         <Header 
-          onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+          onToggleBookmarks={handleToggleBookmarks} 
           onSearch={handleSearch} 
           onGenreSelect={handleGenreSelect}
           onNavigateHome={handleBackToHome}
-          onNavigatePopular={() => setLibrarySection("popular")}
-          onNavigateLatest={() => setLibrarySection("latest")}
-          onNavigateBrowse={() => setLibrarySection("browse")}
+          onNavigatePopular={handleNavigatePopular}
+          onNavigateLatest={handleNavigateLatest}
+          onNavigateBrowse={handleNavigateBrowse}
           onNavigateAbout={() => { setShowPrivacy(false); setShowTerms(false); setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => { setShowPrivacy(false); setShowAbout(false); setShowContact(false); setShowTerms(true); }}
           onNavigatePrivacy={() => setShowPrivacy(true)}
@@ -265,9 +396,9 @@ export default function Home() {
           <PrivacyPolicy />
         </main>
         <Footer 
-          onNavigatePopular={() => setLibrarySection("popular")} 
-          onNavigateLatest={() => setLibrarySection("latest")} 
-          onNavigateBrowse={() => setLibrarySection("browse")} 
+          onNavigatePopular={handleNavigatePopular} 
+          onNavigateLatest={handleNavigateLatest} 
+          onNavigateBrowse={handleNavigateBrowse} 
           onNavigateBookmarks={() => setShowBookmarks(true)}
           onNavigateAbout={() => { setShowPrivacy(false); setShowTerms(false); setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => { setShowPrivacy(false); setShowAbout(false); setShowContact(false); setShowTerms(true); }}
@@ -282,13 +413,13 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
         <Header 
-          onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+          onToggleBookmarks={handleToggleBookmarks} 
           onSearch={handleSearch} 
           onGenreSelect={handleGenreSelect}
           onNavigateHome={handleBackToHome}
-          onNavigatePopular={() => setLibrarySection("popular")}
-          onNavigateLatest={() => setLibrarySection("latest")}
-          onNavigateBrowse={() => setLibrarySection("browse")}
+          onNavigatePopular={handleNavigatePopular}
+          onNavigateLatest={handleNavigateLatest}
+          onNavigateBrowse={handleNavigateBrowse}
           onNavigateAbout={() => { setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => { setShowContact(false); setShowTerms(true); }}
           onNavigatePrivacy={() => { setShowContact(false); setShowPrivacy(true); }}
@@ -299,9 +430,9 @@ export default function Home() {
           <ContactForm />
         </main>
         <Footer 
-          onNavigatePopular={() => setLibrarySection("popular")} 
-          onNavigateLatest={() => setLibrarySection("latest")} 
-          onNavigateBrowse={() => setLibrarySection("browse")} 
+          onNavigatePopular={handleNavigatePopular} 
+          onNavigateLatest={handleNavigateLatest} 
+          onNavigateBrowse={handleNavigateBrowse} 
           onNavigateBookmarks={() => setShowBookmarks(true)}
           onNavigateAbout={() => { setShowContact(false); setShowTerms(false); setShowPrivacy(false); setShowAbout(true); }}
           onNavigateTerms={() => { setShowContact(false); setShowAbout(false); setShowPrivacy(false); setShowTerms(true); }}
@@ -316,13 +447,13 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
         <Header 
-          onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+          onToggleBookmarks={handleToggleBookmarks} 
           onSearch={handleSearch} 
           onGenreSelect={handleGenreSelect}
           onNavigateHome={handleBackToHome}
-          onNavigatePopular={() => setLibrarySection("popular")}
-          onNavigateLatest={() => setLibrarySection("latest")}
-          onNavigateBrowse={() => setLibrarySection("browse")}
+          onNavigatePopular={handleNavigatePopular}
+          onNavigateLatest={handleNavigateLatest}
+          onNavigateBrowse={handleNavigateBrowse}
           onNavigateAbout={() => { setShowTerms(false); setShowPrivacy(false); setShowContact(false); setShowAbout(true); }}
           onNavigateTerms={() => { setShowAbout(false); setShowPrivacy(false); setShowContact(false); setShowTerms(true); }}
           onNavigatePrivacy={() => { setShowAbout(false); setShowTerms(false); setShowContact(false); setShowPrivacy(true); }}
@@ -338,17 +469,17 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#040506] text-[#e6f7f7]">
       <Header 
-        onToggleBookmarks={() => setShowBookmarks(s => !s)} 
+        onToggleBookmarks={handleToggleBookmarks} 
         onSearch={handleSearch} 
         onGenreSelect={handleGenreSelect}
         onNavigateHome={handleBackToHome}
-        onNavigatePopular={() => setLibrarySection("popular")}
-        onNavigateLatest={() => setLibrarySection("latest")}
-        onNavigateBrowse={() => setLibrarySection("browse")}
-        onNavigateAbout={() => { setShowTerms(false); setShowPrivacy(false); setShowContact(false); setShowAbout(true); }}
-        onNavigateTerms={() => { setShowAbout(false); setShowPrivacy(false); setShowContact(false); setShowTerms(true); }}
-        onNavigatePrivacy={() => { setShowAbout(false); setShowTerms(false); setShowContact(false); setShowPrivacy(true); }}
-        onNavigateContact={() => { setShowAbout(false); setShowTerms(false); setShowPrivacy(false); setShowContact(true); }}
+        onNavigatePopular={handleNavigatePopular}
+        onNavigateLatest={handleNavigateLatest}
+        onNavigateBrowse={handleNavigateBrowse}
+        onNavigateAbout={handleNavigateAbout}
+        onNavigateTerms={handleNavigateTerms}
+        onNavigatePrivacy={handleNavigatePrivacy}
+        onNavigateContact={handleNavigateContact}
         activePage="home"
       />
       
@@ -592,7 +723,16 @@ export default function Home() {
         </>
       )}
       
-      <Footer onNavigatePopular={() => setLibrarySection("popular")} onNavigateLatest={() => setLibrarySection("latest")} onNavigateBrowse={() => setLibrarySection("browse")} onNavigateBookmarks={() => setShowBookmarks(true)} onNavigateAbout={() => { setShowTerms(false); setShowPrivacy(false); setShowContact(false); setShowAbout(true); }} onNavigateTerms={() => { setShowAbout(false); setShowPrivacy(false); setShowContact(false); setShowTerms(true); }} onNavigatePrivacy={() => { setShowAbout(false); setShowTerms(false); setShowContact(false); setShowPrivacy(true); }} onNavigateContact={() => { setShowAbout(false); setShowTerms(false); setShowPrivacy(false); setShowContact(true); }} />
+      <Footer 
+        onNavigatePopular={handleNavigatePopular} 
+        onNavigateLatest={handleNavigateLatest} 
+        onNavigateBrowse={handleNavigateBrowse} 
+        onNavigateBookmarks={() => setShowBookmarks(true)} 
+        onNavigateAbout={handleNavigateAbout} 
+        onNavigateTerms={handleNavigateTerms} 
+        onNavigatePrivacy={handleNavigatePrivacy} 
+        onNavigateContact={handleNavigateContact} 
+      />
     </div>
   );
 }

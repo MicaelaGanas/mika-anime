@@ -66,8 +66,33 @@ function PosterCard({ manga, onClick, delay = 0 }: PosterCardProps) {
   );
 }
 
-export default function Library({ section = "popular", onNavigateHome }: { section?: "popular" | "latest" | "browse"; onNavigateHome?: () => void }) {
-  const [showBookmarks, setShowBookmarks] = useState(false);
+export default function Library({ 
+  section = "popular", 
+  onNavigateHome,
+  onNavigatePopular,
+  onNavigateLatest,
+  onNavigateBrowse,
+  onNavigateAbout,
+  onNavigateTerms,
+  onNavigatePrivacy,
+  onNavigateContact,
+  onToggleBookmarks,
+  onSearch,
+  onGenreSelect
+}: { 
+  section?: "popular" | "latest" | "browse"; 
+  onNavigateHome?: () => void;
+  onNavigatePopular?: () => void;
+  onNavigateLatest?: () => void;
+  onNavigateBrowse?: () => void;
+  onNavigateAbout?: () => void;
+  onNavigateTerms?: () => void;
+  onNavigatePrivacy?: () => void;
+  onNavigateContact?: () => void;
+  onToggleBookmarks?: () => void;
+  onSearch?: (q: string) => void;
+  onGenreSelect?: (genre: string) => void;
+}) {
   const [manga, setManga] = useState<any[]>([]);
   const [selectedManga, setSelectedManga] = useState<string | null>(null);
   const [librarySection, setLibrarySection] = useState<"popular" | "latest" | "browse" | null>(null);
@@ -148,19 +173,21 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
       .catch(() => setLoadingMore(false));
   };
 
-  if (showBookmarks) {
-    return (
-      <div className="min-h-screen bg-[#040506]">
-        <Header onToggleBookmarks={() => setShowBookmarks(false)} />
-        <div className="pt-20 sm:pt-24 max-w-7xl mx-auto px-2 sm:px-4 pb-6 sm:pb-12">
-          <Bookmarks onBack={() => setShowBookmarks(false)} />
-        </div>
-      </div>
-    );
-  }
-
   if (librarySection && librarySection !== section) {
-    return <Library section={librarySection} onNavigateHome={onNavigateHome} />;
+    return <Library 
+      section={librarySection} 
+      onNavigateHome={onNavigateHome}
+      onNavigatePopular={onNavigatePopular}
+      onNavigateLatest={onNavigateLatest}
+      onNavigateBrowse={onNavigateBrowse}
+      onNavigateAbout={onNavigateAbout}
+      onNavigateTerms={onNavigateTerms}
+      onNavigatePrivacy={onNavigatePrivacy}
+      onNavigateContact={onNavigateContact}
+      onToggleBookmarks={onToggleBookmarks}
+      onSearch={onSearch}
+      onGenreSelect={onGenreSelect}
+    />;
   }
 
   if (selectedManga) {
@@ -205,11 +232,17 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
       </div>
 
       <Header 
-        onToggleBookmarks={() => setShowBookmarks(true)}
+        onToggleBookmarks={onToggleBookmarks}
         onNavigateHome={onNavigateHome}
-        onNavigatePopular={() => setLibrarySection("popular")}
-        onNavigateLatest={() => setLibrarySection("latest")}
-        onNavigateBrowse={() => setLibrarySection("browse")}
+        onNavigatePopular={onNavigatePopular}
+        onNavigateLatest={onNavigateLatest}
+        onNavigateBrowse={onNavigateBrowse}
+        onNavigateAbout={onNavigateAbout}
+        onNavigateTerms={onNavigateTerms}
+        onNavigatePrivacy={onNavigatePrivacy}
+        onNavigateContact={onNavigateContact}
+        onSearch={onSearch}
+        onGenreSelect={onGenreSelect}
         activePage={section}
       />
 
@@ -267,11 +300,14 @@ export default function Library({ section = "popular", onNavigateHome }: { secti
       </div>
 
       <Footer 
-        onNavigatePopular={() => setLibrarySection("popular")} 
-        onNavigateLatest={() => setLibrarySection("latest")} 
-        onNavigateBrowse={() => setLibrarySection("browse")} 
-        onNavigateBookmarks={() => setShowBookmarks(true)} 
-        onNavigateAbout={() => {/* Navigate to about - will need parent callback */}}
+        onNavigatePopular={onNavigatePopular} 
+        onNavigateLatest={onNavigateLatest} 
+        onNavigateBrowse={onNavigateBrowse} 
+        onNavigateBookmarks={onToggleBookmarks} 
+        onNavigateAbout={onNavigateAbout}
+        onNavigateTerms={onNavigateTerms}
+        onNavigatePrivacy={onNavigatePrivacy}
+        onNavigateContact={onNavigateContact}
       />
     </div>
   );
